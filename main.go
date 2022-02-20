@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"githubembedapi/card"
 	"net/http"
 	"strings"
 
@@ -10,22 +11,40 @@ import (
 
 //https://go.dev/doc/tutorial/web-service-gin
 
-type card struct {
-	Title     string   `json:"title"`
-	Languages []string `json:"languages"`
-}
-
 func main() {
 	router := gin.Default()
 	router.GET("/skills", getSkills)
+	router.GET("/card", getCard)
 	router.Run("localhost:8080")
+}
+
+func getCard(c *gin.Context) {
+	c.Header("Content-Type", "image/svg+xml")
+	colors := []string{"red", "blue"}
+	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
+
+	newCard := card.Newcard("test", languages, colors)
+
+	fmt.Println(newCard)
+
+	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
 
 func getSkills(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
 
-	fmt.Println(languages[0])
+	body := []string{`<svg width="500" height="500" fill="none" viewBox="0 0 500 500"
+	xmlns="http://www.w3.org/2000/svg">`}
+
+	// Generate body for the languages
+	for i, s := range languages {
+		text := fmt.Sprintf(`<text x="30" y="%d">%s</text>`, i*10, s)
+		body = append(body, text)
+	}
+	body = append(body, `</svg>`)
+
+	fmt.Println(strings.Join(body, "\n"))
 	var svg string = `<svg width="500" height="500" fill="none" viewBox="0 0 500 500"
 	xmlns="http://www.w3.org/2000/svg">
 	<style>
