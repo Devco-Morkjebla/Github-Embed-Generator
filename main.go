@@ -16,14 +16,22 @@ func main() {
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
 	router.Run("localhost:8080")
+
+	// err := http.ListenAndServe(":8080", nil)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
 }
 
 func getCard(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	colors := []string{"red", "blue"}
 	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
-
-	newCard := card.Newcard("test", languages, colors)
+	title := c.Request.URL.Query().Get("title")
+	if len(title) > 0 {
+		title = "Languages"
+	}
+	newCard := card.Newcard(title, languages, colors)
 
 	fmt.Println(newCard)
 
