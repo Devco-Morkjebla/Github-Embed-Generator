@@ -78,7 +78,6 @@ func rankList(c *gin.Context) {
 	newCard := card.Rankcard(title, users, color)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
-
 }
 
 func getSkills(c *gin.Context) {
