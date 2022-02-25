@@ -2,3 +2,6 @@
 
 ## Routes
 > /skills/:languages
+
+# users are comma seperated
+> /rankList/:users

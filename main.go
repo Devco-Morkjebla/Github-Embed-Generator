@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"githubembedapi/card"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +17,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
+	router.GET("/rankList", rankList)
 	router.Run("localhost:8080")
 
 	// err := http.ListenAndServe(":8080", nil)
@@ -36,6 +39,61 @@ func getCard(c *gin.Context) {
 	fmt.Println(newCard)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
+}
+
+type Response struct {
+	Total_Count int     `json:"total_count"`
+	Items       []Items `json:"items"`
+}
+type Items struct {
+	Url          string `json:"url"`
+	Comments_url string `json:"comments_url"`
+}
+
+func rankList(c *gin.Context) {
+	// c.Header("Content-Type", "image/svg+xml")
+
+	users := strings.Split(c.Request.URL.Query().Get("brukere"), ",")
+
+	fmt.Println(users)
+	for key := range users {
+		fmt.Println(key)
+		userurl := "https://api.github.com/search/commits?q=author:" + fmt.Sprintf("%v", key) + "&sort=author-date&order=desc&page=1"
+		// userurl := "https://api.github.com/search/commits?q=author:lartrax&sort=author-date&order=desc&page=1"
+
+		fmt.Println(key)
+		response, err := http.Get(userurl)
+
+		// fmt.Println(response.Body)
+		if err != nil {
+			fmt.Print(err.Error())
+			os.Exit(1)
+		}
+
+		// responseData, err := ioutil.ReadAll(response.Body)
+
+		if err != nil {
+			panic(err)
+		}
+
+		decoder := json.NewDecoder(response.Body)
+
+		var responseObject Response
+		// decodeerr := json.Unmarshal(responseData, &responseObject)
+		decodeerr := decoder.Decode(&responseObject)
+
+		if decodeerr != nil {
+			panic(decodeerr)
+		}
+		fmt.Println(responseObject)
+		c.String(http.StatusOK, string(responseObject.Total_Count))
+	}
+
+	// title := "test"
+	// newCard := card.Newcard(title, users, colors)
+
+	// fmt.Println(newCard)
+
 }
 
 func getSkills(c *gin.Context) {
