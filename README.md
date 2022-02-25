@@ -12,3 +12,8 @@ Customization:
 > textcolor - custom color
 > backgroundcolor - custom color
 > title - Custom title
+
+/repository 
+// https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/code_frequency
+// https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/commit_activity
+// https://api.github.com/orgs/devco-morkjebla/members
