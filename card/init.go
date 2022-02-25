@@ -87,10 +87,11 @@ func Rankcard(title string, score []Kv, colors []string) RankCard {
 	body := []string{
 		svgTag,
 		`<style>`,
-		`.small { font: 20px sans-serif; fill: black}`,
+		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
+		`.small { font: 20px sans-serif; fill: black; font-family: Papyrus;}`,
 		`.large { font: 25px sans-serif; fill: black}`,
 		`</style>`,
-		`<rect x="0" y="0" width="` + strconv.Itoa(width) + `" height="200" rx="15" fill="grey" style="stroke-width:3;stroke:rgba(0,0,0)"/>`,
+		`<rect x="0" y="0" width="` + strconv.Itoa(width) + `" height="200" rx="15" fill="white" style="stroke-width:3;stroke:rgba(0,0,0)"/>`,
 		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="black"/>`,
 		titlesvg,
 	}
@@ -98,13 +99,12 @@ func Rankcard(title string, score []Kv, colors []string) RankCard {
 	for _, kv := range score {
 		fmt.Printf("%s, %d\n", kv.Key, kv.Value)
 	}
-	for _, s := range score {
+	for i, s := range score {
 		var rowx int = 20
 
-		text := fmt.Sprintf(`<text x="%v" y="%v" class="small">%v - %v</text>`, rowx+40, totalHeight+20, s.Key, s.Value)
+		text := fmt.Sprintf(`<text x="%v" y="%v" class="small">%v. %v - %v commits</text>`, rowx, totalHeight+20, i, s.Key, s.Value)
 		totalHeight += 30
 
-		// panic("This crappy code causes error")
 		body = append(body, text)
 
 	}
