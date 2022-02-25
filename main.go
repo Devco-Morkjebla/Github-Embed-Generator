@@ -1,13 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"githubembedapi/card"
-	"io/ioutil"
 	"net/http"
-	"os"
-	"sort"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +16,8 @@ func main() {
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
-	// router.Run("arvidgithubembed.herokuapp.com")
-	router.Run()
+	router.Run("localhost:8080")
+	// router.Run()
 	// err := http.ListenAndServe(":8080", nil)
 	// if err != nil {
 	// 	panic(err.Error())
@@ -43,59 +39,17 @@ func getCard(c *gin.Context) {
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
 
-type Response struct {
-	Total_Count int     `json:"total_count"`
-	Items       []Items `json:"items"`
-}
-type Items struct {
-	Url          string `json:"url"`
-	Comments_url string `json:"comments_url"`
-}
-
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	colors := []string{"red", "blue"}
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
 	title := c.Request.FormValue("title")
-	score := make(map[string]int)
-	for key, i := range users {
 
-		userurl := "https://api.github.com/search/commits?q=author:" + fmt.Sprintf("%v", i) + "&sort=author-date&order=desc&page=1"
-
-		response, err := http.Get(userurl)
-
-		if err != nil {
-			fmt.Print(err.Error())
-			os.Exit(1)
-		}
-
-		responseData, err := ioutil.ReadAll(response.Body)
-
-		if err != nil {
-			panic(err)
-		}
-
-		var responseObject Response
-		decodeerr := json.Unmarshal(responseData, &responseObject)
-
-		if decodeerr != nil {
-			panic(decodeerr)
-		}
-
-		score[fmt.Sprintf("%v", users[key])] = responseObject.Total_Count
+	if title == "" {
+		title = "Rank"
 	}
 
-	// Sort Scores
-	var ss []card.Kv
-	for k, v := range score {
-		ss = append(ss, card.Kv{k, v})
-	}
-
-	sort.Slice(ss, func(i, j int) bool {
-		return ss[i].Value > ss[j].Value
-	})
-
-	newCard := card.Rankcard(title, ss, colors)
+	newCard := card.Rankcard(title, users, colors)
 
 	// title := "test"
 
