@@ -34,7 +34,7 @@ type Kv struct {
 type RankCard struct {
 	Title  string   `json:"title"`
 	Score  []Kv     `json:"score"`
-	Colors []string `json:"colors"`
+	Styles Styles   `json:"styles"`
 	Body   []string `json:"body"`
 }
 type Response struct {
@@ -51,18 +51,27 @@ type Author struct {
 	Avatar_Url string `json:"avatar_url"`
 }
 
+type Styles struct {
+	Title      string
+	Border     string
+	Background string
+	Text       string
+	Textfont   string
+}
+
 func Newcard(title string, languages []string, colors []string) Card {
 	totalHeight := 40
 	width := 400
 	strokewidth := 3
 	svgTag := `<svg width="` + strconv.Itoa(width+strokewidth) + `" height="` + strconv.Itoa(totalHeight+180) + `" fill="none" viewBox="0 0 ` + strconv.Itoa(width+strokewidth) + ` ` + strconv.Itoa(totalHeight+180) + `"
 	xmlns="http://www.w3.org/2000/svg">`
-	titlesvg := fmt.Sprintf(`<text x="20" y="25" class="large">%s</text>`, title)
+	titlesvg := fmt.Sprintf(`<text x="20" y="25" class="title">%s</text>`, title)
 	body := []string{
 		svgTag,
 		`<style>`,
 		`.small { font: 20px sans-serif; fill: black}`,
 		`.large { font: 25px sans-serif; fill: black}`,
+		`.title { font: 25px sans-serif; fill: black}`,
 		`</style>`,
 		`<rect x="0" y="0" width="` + strconv.Itoa(width) + `" height="200" rx="15" fill="grey" style="stroke-width:3;stroke:rgba(0,0,0)"/>`,
 		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="black"/>`,
@@ -100,7 +109,7 @@ func Newcard(title string, languages []string, colors []string) Card {
 	return newcard
 }
 
-func Rankcard(title string, users []string, colors []string) RankCard {
+func Rankcard(title string, users []string, style Styles) RankCard {
 
 	ss := make(map[string]User)
 	for key, i := range users {
@@ -143,17 +152,19 @@ func Rankcard(title string, users []string, colors []string) RankCard {
 	svgTag := `<svg width="` + strconv.Itoa(width+strokewidth) + `" height="` + strconv.Itoa(totalHeight+180) + `" fill="none" viewBox="0 0 ` + strconv.Itoa(width+strokewidth) + ` ` + strconv.Itoa(totalHeight+180) + `"
 	xmlns="http://www.w3.org/2000/svg">`
 
-	titlesvg := fmt.Sprintf(`<text x="20" y="25" class="large">%s</text>`, ToTitleCase(title))
+	titlesvg := fmt.Sprintf(`<text x="20" y="25" class="title">%s</text>`, ToTitleCase(title))
 	body := []string{
 		svgTag,
 		`<style>`,
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.small { font: 20px sans-serif; fill: black; font-family: Helvetica; text-decoration: underline;}`,
+		`.text { font: 20px sans-serif; fill: ` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
 		`.large { font: 25px sans-serif; fill: black}`,
+		`.title { font: 25px sans-serif; fill: ` + style.Title + `}`,
+		`.box { fill: ` + style.Background + `}`,
 		`.profileimage { border-radius: 50%}`,
 		`</style>`,
-		`<rect x="0" y="0" width="` + strconv.Itoa(width) + `" height="200" rx="15" fill="white" style="stroke-width:3;stroke:rgba(0,0,0)"/>`,
-		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="black"/>`,
+		`<rect x="0" y="0" class="box" width="` + strconv.Itoa(width) + `" height="200" rx="15" style="stroke-width:3;stroke:` + style.Border + `"/>`,
+		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="` + style.Border + `"/>`,
 		titlesvg,
 	}
 	// Generate body for the users
@@ -162,7 +173,7 @@ func Rankcard(title string, users []string, colors []string) RankCard {
 		var rowx int = 20
 
 		img := fmt.Sprintf(`<image x="%v" y="%v" href="%v" class="profileimage" height="30" width="30"/>`, rowx, totalHeight, s.Value.Avatar)
-		text := fmt.Sprintf(`<text x="%v" y="%v" class="small">%v. %v - %v commits</text>`, rowx+40, totalHeight+20, pos, ToTitleCase(s.Value.Name), s.Value.Score)
+		text := fmt.Sprintf(`<text x="%v" y="%v" class="text">%v. %v - %v commits</text>`, rowx+40, totalHeight+20, pos, ToTitleCase(s.Value.Name), s.Value.Score)
 		totalHeight += 30
 		pos += 1
 		body = append(body, text)
@@ -170,7 +181,7 @@ func Rankcard(title string, users []string, colors []string) RankCard {
 
 	}
 	body = append(body, `</svg>`)
-	newcard := RankCard{title, score, colors, body}
+	newcard := RankCard{title, score, style, body}
 	return newcard
 }
 func ToTitleCase(str string) string {

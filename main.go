@@ -41,17 +41,41 @@ func getCard(c *gin.Context) {
 
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
-	colors := []string{"red", "blue"}
+	var color card.Styles
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
 	title := c.Request.FormValue("title")
+	bordercolor := c.Request.FormValue("bordercolor")
+	titlecolor := c.Request.FormValue("bordercolor")
+	backgroundcolor := c.Request.FormValue("backgroundcolor")
+	textcolor := c.Request.FormValue("textcolor")
+	textfont := c.Request.FormValue("textfont")
 
 	if title == "" {
 		title = "Rank"
 	}
-
-	newCard := card.Rankcard(title, users, colors)
-
-	// title := "test"
+	if len(users) > 5 {
+		users = users[:5]
+	}
+	if bordercolor == "" {
+		bordercolor = "black"
+	}
+	if titlecolor == "" {
+		titlecolor = "black"
+	}
+	if backgroundcolor == "" {
+		backgroundcolor = "white"
+	}
+	if textcolor == "" {
+		textcolor = "black"
+	}
+	if textfont == "" {
+		textfont = "Helvetica"
+	}
+	color.Border = bordercolor
+	color.Title = titlecolor
+	color.Background = backgroundcolor
+	color.Text = textcolor
+	newCard := card.Rankcard(title, users, color)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 
