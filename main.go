@@ -56,7 +56,7 @@ func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	colors := []string{"red", "blue"}
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
-	title := c.Request.FormValue("users")
+	title := c.Request.FormValue("title")
 	score := make(map[string]int)
 	for key, i := range users {
 
