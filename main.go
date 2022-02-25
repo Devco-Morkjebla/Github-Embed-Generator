@@ -16,8 +16,8 @@ func main() {
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
-	router.Run("localhost:8080")
-	// router.Run()
+	// router.Run("localhost:8080")
+	router.Run()
 	// err := http.ListenAndServe(":8080", nil)
 	// if err != nil {
 	// 	panic(err.Error())
