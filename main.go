@@ -45,7 +45,7 @@ func rankList(c *gin.Context) {
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
 	title := c.Request.FormValue("title")
 	bordercolor := c.Request.FormValue("bordercolor")
-	titlecolor := c.Request.FormValue("bordercolor")
+	titlecolor := c.Request.FormValue("titlecolor")
 	backgroundcolor := c.Request.FormValue("backgroundcolor")
 	textcolor := c.Request.FormValue("textcolor")
 	textfont := c.Request.FormValue("textfont")

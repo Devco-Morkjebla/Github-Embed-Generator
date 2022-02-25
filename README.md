@@ -5,3 +5,10 @@
 
 # users are comma seperated
 > /rankList/:users
+
+Customization:
+> bordercolor - custom color
+> titlecolor - custom color
+> textcolor - custom color
+> backgroundcolor - custom color
+> title - Custom title
