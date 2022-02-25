@@ -3,6 +3,7 @@ package card
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type CardColors struct {
@@ -99,16 +100,20 @@ func Rankcard(title string, score []Kv, colors []string) RankCard {
 	for _, kv := range score {
 		fmt.Printf("%s, %d\n", kv.Key, kv.Value)
 	}
-	for i, s := range score {
+	pos := 1
+	for _, s := range score {
 		var rowx int = 20
 
-		text := fmt.Sprintf(`<text x="%v" y="%v" class="small">%v. %v - %v commits</text>`, rowx, totalHeight+20, i, s.Key, s.Value)
+		text := fmt.Sprintf(`<text x="%v" y="%v" class="small">%v. %v - %v commits</text>`, rowx, totalHeight+20, pos, s.Key, s.Value)
 		totalHeight += 30
-
+		pos += 1
 		body = append(body, text)
 
 	}
 	body = append(body, `</svg>`)
-	newcard := RankCard{title, score, colors, body}
+	newcard := RankCard{ToTitleCase(title), score, colors, body}
 	return newcard
+}
+func ToTitleCase(str string) string {
+	return strings.Title(str)
 }
