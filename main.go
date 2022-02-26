@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"githubembedapi/card"
+	"githubembedapi/organization"
 	"net/http"
 	"strings"
 
@@ -17,12 +18,9 @@ func main() {
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
 	router.GET("/mostactivity", getMostactivity)
-	// router.Run("localhost:8080")
-	router.Run()
-	// err := http.ListenAndServe(":8080", nil)
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
+	router.Run("localhost:8080")
+	// router.Run()
+
 }
 
 func getCard(c *gin.Context) {
@@ -41,14 +39,15 @@ func getCard(c *gin.Context) {
 }
 func getMostactivity(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
-	var color card.Styles
-	org := c.Request.FormValue("title")
+	var color organization.Styles
+	org := c.Request.FormValue("org")
 	title := c.Request.FormValue("title")
 	bordercolor := c.Request.FormValue("bordercolor")
 	titlecolor := c.Request.FormValue("titlecolor")
 	backgroundcolor := c.Request.FormValue("backgroundcolor")
 	textcolor := c.Request.FormValue("textcolor")
 	textfont := c.Request.FormValue("textfont")
+	boxcolor := c.Request.FormValue("boxcolor")
 	if title == "" {
 		title = "Rank"
 	}
@@ -67,13 +66,16 @@ func getMostactivity(c *gin.Context) {
 	if textfont == "" {
 		textfont = "Helvetica"
 	}
+	if boxcolor == "" {
+		boxcolor = "black"
+	}
 	color.Border = bordercolor
 	color.Title = titlecolor
 	color.Background = backgroundcolor
 	color.Text = textcolor
 	color.Textfont = textfont
-
-	newCard := card.MostactivityCard(title, org, color)
+	color.Box = boxcolor
+	newCard := organization.MostactivityCard(title, org, color)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
