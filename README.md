@@ -13,6 +13,9 @@ Customization:
 > backgroundcolor - custom color
 > title - Custom title
 
+Example: 
+`/ranklist?users=lartrax,arvidwedtstein&bordercolor=black&titlecolor=red&textcolor=green&backgroundcolor=yellow&title=test`
+
 /repository 
 // https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/code_frequency
 // https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/commit_activity
