@@ -16,6 +16,7 @@ func main() {
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
+	router.GET("/mostactivity", getMostactivity)
 	// router.Run("localhost:8080")
 	router.Run()
 	// err := http.ListenAndServe(":8080", nil)
@@ -38,7 +39,44 @@ func getCard(c *gin.Context) {
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
+func getMostactivity(c *gin.Context) {
+	c.Header("Content-Type", "image/svg+xml")
+	var color card.Styles
+	org := c.Request.FormValue("title")
+	title := c.Request.FormValue("title")
+	bordercolor := c.Request.FormValue("bordercolor")
+	titlecolor := c.Request.FormValue("titlecolor")
+	backgroundcolor := c.Request.FormValue("backgroundcolor")
+	textcolor := c.Request.FormValue("textcolor")
+	textfont := c.Request.FormValue("textfont")
+	if title == "" {
+		title = "Rank"
+	}
+	if bordercolor == "" {
+		bordercolor = "black"
+	}
+	if titlecolor == "" {
+		titlecolor = "black"
+	}
+	if backgroundcolor == "" {
+		backgroundcolor = "white"
+	}
+	if textcolor == "" {
+		textcolor = "black"
+	}
+	if textfont == "" {
+		textfont = "Helvetica"
+	}
+	color.Border = bordercolor
+	color.Title = titlecolor
+	color.Background = backgroundcolor
+	color.Text = textcolor
+	color.Textfont = textfont
 
+	newCard := card.MostactivityCard(title, org, color)
+
+	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
+}
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	var color card.Styles
@@ -75,6 +113,7 @@ func rankList(c *gin.Context) {
 	color.Title = titlecolor
 	color.Background = backgroundcolor
 	color.Text = textcolor
+	color.Textfont = textfont
 	newCard := card.Rankcard(title, users, color)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))

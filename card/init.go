@@ -11,10 +11,6 @@ import (
 	"strings"
 )
 
-type CardColors struct {
-	TitleColor string `json:"titleColor"`
-}
-
 type Card struct {
 	Title     string   `json:"title"`
 	Languages []string `json:"languages"`
