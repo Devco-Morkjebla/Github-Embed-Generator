@@ -9,17 +9,17 @@ import (
 
 	"regexp"
 
-	"github.com/alexsasharegan/dotenv"
+	// "github.com/alexsasharegan/dotenv"
 	"github.com/gin-gonic/gin"
 )
 
 //https://go.dev/doc/tutorial/web-service-gin
 
 func main() {
-	err := dotenv.Load()
-	if err != nil {
-		panic(err)
-	}
+	// err := dotenv.Load()
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	router := gin.Default()
 	router.GET("/ranklist", rankList)
