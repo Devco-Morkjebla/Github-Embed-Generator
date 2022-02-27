@@ -149,10 +149,35 @@ type Styles struct {
 }
 
 func MostactivityCard(title string, org string, style Styles, github_token string) OrgCard {
+	apiurl := "https://api.github.com/orgs/" + org + "/repos"
+	// Create a new request using http
+	reqAPI, err := http.NewRequest("GET", apiurl, nil)
+
+	// add authorization header to the req
+	reqAPI.Header.Set("Accept", "application/vnd.heroku+json; version=3")
+	reqAPI.Header.Set("Authorization", "Bearer 095298d5-2ada-41f0-82ba-88419b5e6600")
+	if err != nil {
+		panic(err.Error())
+	}
+	clientAPI := &http.Client{}
+
+	responseAPI, err := clientAPI.Do(reqAPI)
+
+	if err != nil {
+		panic(err.Error())
+	}
+	defer responseAPI.Body.Close()
+
+	responseDataAPI, err := ioutil.ReadAll(responseAPI.Body)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var responseObjectAPI Response
+	json.Unmarshal(responseDataAPI, &responseObjectAPI)
 
 	userurl := "https://api.github.com/orgs/" + org + "/repos"
-	// userurl := "https://api.github.com/orgs/devco-morkjebla/repos"
-
 	// Create a new request using http
 	req, err := http.NewRequest("GET", userurl, nil)
 
