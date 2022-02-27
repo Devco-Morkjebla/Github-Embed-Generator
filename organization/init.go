@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -159,15 +158,28 @@ type Styles struct {
 	Box        string
 }
 
-func MostactivityCard(title string, org string, style Styles) OrgCard {
+func MostactivityCard(title string, org string, style Styles, github_token string) OrgCard {
 
-	// userurl := "https://api.github.com/orgs/" + org + "/repos"
-	userurl := "https://api.github.com/orgs/devco-morkjebla/repos"
-	response, err := http.Get(userurl)
+	userurl := "https://api.github.com/orgs/" + org + "/repos"
+	// userurl := "https://api.github.com/orgs/devco-morkjebla/repos"
+
+	// Create a new request using http
+	req, err := http.NewRequest("GET", userurl, nil)
+
+	// add authorization header to the req
+	req.Header.Set("Authorization", "Token "+github_token)
 	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
+		panic(err.Error())
 	}
+	client := &http.Client{}
+
+	response, err := client.Do(req)
+
+	if err != nil {
+		panic(err.Error())
+	}
+	defer response.Body.Close()
+
 	responseData, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
@@ -177,7 +189,7 @@ func MostactivityCard(title string, org string, style Styles) OrgCard {
 	var responseObject Response
 	json.Unmarshal(responseData, &responseObject)
 
-	height := 600
+	height := 800
 	width := 600
 	padding := 10
 	strokewidth := 3
@@ -191,6 +203,8 @@ func MostactivityCard(title string, org string, style Styles) OrgCard {
 		`.large { font: 25px sans-serif; fill: black}`,
 		`.title { font: 25px sans-serif; fill: ` + style.Title + `}`,
 		`.box { fill: ` + style.Background + `}`,
+		`.repobox { margin: 5px; padding: 12px; width: 270px; background: rgba(255,0,0,0.5); border: 2px solid ` + style.Border + `}`,
+		`.repobox:hover { background: rgba(255,0,0,1);}`,
 		`.profileimage { border-radius: 50%}`,
 		`</style>`,
 		`<rect x="0" y="0" class="box" width="` + strconv.Itoa(width) + `" height="` + strconv.Itoa(height) + `" rx="15" style="stroke-width:3;stroke:` + style.Border + `"/>`,
@@ -201,46 +215,48 @@ func MostactivityCard(title string, org string, style Styles) OrgCard {
 		body = append(body, content)
 		return content
 	}
+	pos := 80
+	pos2 := 0
 	row := func(content []string, posX int, posY int) string {
+		bodyAdd(`<g transform="translate(` + strconv.Itoa(posX) + `,` + strconv.Itoa(posY) + `) rotate(0)">`)
 		for _, v := range content {
-
-			fields := strings.Fields(v)
-
-			// Set X pos
-			fields[1] = strings.Join([]string{`x="`, strconv.Itoa(posX), `"`}, "")
-			// Set Y pos
-			fields[2] = strings.Join([]string{`y="`, strconv.Itoa(posY), `"`}, "")
-
-			bodyAdd(strings.Join(fields, ""))
+			bodyAdd(v)
 			posY += 30
+		}
+		bodyAdd(`</g>`)
+		if posY+100 >= height {
+			pos2 += 290
+			pos = -40
 		}
 		return "test"
 	}
-	// fmt.Println(row("s"))
 	fmt.Println(len(responseObject))
-	for _, r := range responseObject {
-		response2, err := http.Get("https://api.github.com/repos/" + org + "/CameraLight/contents/")
-		if err != nil {
-			panic(err.Error())
-		}
-		responseData2, err := ioutil.ReadAll(response2.Body)
-		if err != nil {
-			panic(err)
-		}
-		var responseContent Content
-		json.Unmarshal(responseData2, &responseContent)
-		pos := 80
-		row([]string{
-			`<rect x="0" y="" width="270" height="100" fill="black"/>`,
-			`<text x="" y="" class="text">` + r.Name + `</text>`,
-			`<text x="" y="" class="text">Language - ` + r.Language + `</text>`,
-			`<text x="" y="" class="text">Issues - ` + strconv.Itoa(r.OpenIssuesCount) + `</text>`,
-			`<text x="" y="" class="text">Files - ` + strconv.Itoa(len(responseContent)) + `</text>`,
-		}, padding*2, pos)
-		pos += 100
-	}
-	bodyAdd(`</svg>`)
 
+	bodyAdd(`<g>`)
+	for i, r := range responseObject {
+		// response2, err := http.Get("https://api.github.com/repos/" + org + "/CameraLight/contents/")
+		// if err != nil {
+		// 	panic(err.Error())
+		// }
+
+		// responseData2, err := ioutil.ReadAll(response2.Body)
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// var responseContent Content
+		// json.Unmarshal(responseData2, &responseContent)
+		fmt.Println(strconv.Itoa(i) + " - " + r.Name)
+
+		row([]string{
+			`<rect x="0" y="0" rx="5" width="270" height="100" fill="blue" style="stroke-width:3;stroke:` + style.Border + `"/>`,
+			`<a href="` + r.HTMLURL + `"><text x="5" y="30" class="title">` + r.Name + `</text></a>`,
+			`<text x="5" y="60" class="text">Language - ` + r.Language + `</text>`,
+			`<text x="5" y="90" class="text">Issues - ` + strconv.Itoa(r.OpenIssuesCount) + `</text>`,
+		}, pos2+(padding*2), pos)
+		pos += 120
+	}
+	bodyAdd(`</g>`)
+	bodyAdd(`</svg>`)
 	newcard := OrgCard{title, org, style, body}
 	return newcard
 

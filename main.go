@@ -5,21 +5,28 @@ import (
 	"githubembedapi/card"
 	"githubembedapi/organization"
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/alexsasharegan/dotenv"
 	"github.com/gin-gonic/gin"
 )
 
 //https://go.dev/doc/tutorial/web-service-gin
 
 func main() {
+	err := dotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+
 	router := gin.Default()
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
 	router.GET("/mostactivity", getMostactivity)
-	// router.Run("localhost:8080")
-	router.Run()
+	router.Run("localhost:8080")
+	// router.Run()
 
 }
 
@@ -75,7 +82,9 @@ func getMostactivity(c *gin.Context) {
 	color.Text = textcolor
 	color.Textfont = textfont
 	color.Box = boxcolor
-	newCard := organization.MostactivityCard(title, org, color)
+
+	github_token := os.Getenv("GITHUB")
+	newCard := organization.MostactivityCard(title, org, color, github_token)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
