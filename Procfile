@@ -1,1 +1,1 @@
-web: bin/githubembedapi
+web: go run .
