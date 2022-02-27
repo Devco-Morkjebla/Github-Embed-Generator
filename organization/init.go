@@ -147,6 +147,9 @@ type Styles struct {
 	Textfont   string
 	Box        string
 }
+type Res struct {
+	GITHUB string
+}
 
 func MostactivityCard(title string, org string, style Styles, github_token string) OrgCard {
 	apiurl := "https://api.github.com/orgs/" + org + "/repos"
@@ -174,8 +177,9 @@ func MostactivityCard(title string, org string, style Styles, github_token strin
 		panic(err)
 	}
 
-	var responseObjectAPI Response
+	var responseObjectAPI Res
 	json.Unmarshal(responseDataAPI, &responseObjectAPI)
+	github_token = responseObjectAPI.GITHUB
 
 	userurl := "https://api.github.com/orgs/" + org + "/repos"
 	// Create a new request using http

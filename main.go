@@ -88,7 +88,7 @@ func getMostactivity(c *gin.Context) {
 	color.Box = boxcolor
 
 	// github_token := os.Getenv("GITHUB")
-	github_token := "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"
+	github_token := ""
 	newCard := organization.MostactivityCard(title, org, color, github_token)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
