@@ -37,3 +37,6 @@ Example:
 // https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/commit_activity
 // https://api.github.com/orgs/devco-morkjebla/members
 //https://mholt.github.io/json-to-go/
+
+//http://localhost:8080/mostactivity?org=devco-morkjebla&bordercolor=ff0000&boxcolor=222222&backgroundcolor=000000&titlecolor=ffffff&textcolor=dddddd&textcolor=000000
+//https://arvidgithubembed.herokuapp.com/ranklist?users=lartrax,arvidwedtstein,alvaage,migliusmockus
