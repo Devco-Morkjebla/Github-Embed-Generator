@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"regexp"
+
 	"github.com/alexsasharegan/dotenv"
 	"github.com/gin-gonic/gin"
 )
@@ -58,23 +60,26 @@ func getMostactivity(c *gin.Context) {
 	if title == "" {
 		title = "Rank"
 	}
-	if bordercolor == "" {
-		bordercolor = "black"
+
+	r, _ := regexp.Compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+	if !r.MatchString(bordercolor) {
+		bordercolor = "000000"
 	}
-	if titlecolor == "" {
-		titlecolor = "black"
+	if !r.MatchString(titlecolor) {
+		titlecolor = "000000"
 	}
-	if backgroundcolor == "" {
-		backgroundcolor = "white"
+	fmt.Println(r.MatchString(backgroundcolor))
+	if !r.MatchString(backgroundcolor) {
+		backgroundcolor = "ffffff"
 	}
-	if textcolor == "" {
-		textcolor = "black"
+	if !r.MatchString(textcolor) {
+		textcolor = "000000"
 	}
 	if textfont == "" {
 		textfont = "Helvetica"
 	}
-	if boxcolor == "" {
-		boxcolor = "black"
+	if !r.MatchString(boxcolor) {
+		boxcolor = "000000"
 	}
 	color.Border = bordercolor
 	color.Title = titlecolor

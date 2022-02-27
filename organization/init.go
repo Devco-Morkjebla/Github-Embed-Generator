@@ -120,22 +120,12 @@ type Response []struct {
 		Triage   bool `json:"triage"`
 		Pull     bool `json:"pull"`
 	} `json:"permissions"`
+	Commits int
 }
-type Content []struct {
-	Name        string      `json:"name"`
-	Path        string      `json:"path"`
-	Sha         string      `json:"sha"`
-	Size        int         `json:"size"`
-	URL         string      `json:"url"`
-	HTMLURL     string      `json:"html_url"`
-	GitURL      string      `json:"git_url"`
-	DownloadURL interface{} `json:"download_url"`
-	Type        string      `json:"type"`
-	Links       struct {
-		Self string `json:"self"`
-		Git  string `json:"git"`
-		HTML string `json:"html"`
-	} `json:"_links"`
+type Activity []struct {
+	Total int   `json:"total"`
+	Week  int   `json:"week"`
+	Days  []int `json:"days"`
 }
 type Author struct {
 	Login      string `json:"login"`
@@ -189,73 +179,112 @@ func MostactivityCard(title string, org string, style Styles, github_token strin
 	var responseObject Response
 	json.Unmarshal(responseData, &responseObject)
 
-	height := 800
+	height := 700
 	width := 600
+	boxwidth := 270
+	boxheight := 100
+	titleboxheight := 50
 	padding := 10
 	strokewidth := 3
-	svgTag := `<svg width="` + strconv.Itoa(width+strokewidth) + `" height="` + strconv.Itoa(height+strokewidth) + `" fill="none" viewBox="0 0 ` + strconv.Itoa(width+strokewidth) + ` ` + strconv.Itoa(height+strokewidth) + `"
-	xmlns="http://www.w3.org/2000/svg">`
+
 	body := []string{
-		svgTag,
 		`<style>`,
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: ` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
-		`.large { font: 25px sans-serif; fill: black}`,
-		`.title { font: 25px sans-serif; fill: ` + style.Title + `}`,
-		`.box { fill: ` + style.Background + `}`,
-		`.repobox { margin: 5px; padding: 12px; width: 270px; background: rgba(255,0,0,0.5); border: 2px solid ` + style.Border + `}`,
-		`.repobox:hover { background: rgba(255,0,0,1);}`,
-		`.profileimage { border-radius: 50%}`,
+		`.text { font: 20px sans-serif; fill: #` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
+		`.large {
+			font: 25px sans-serif; 
+			fill: black
+		}`,
+		`.title { font: 25px sans-serif; fill: #` + style.Title + `}`,
+		`.repobox { 
+			fill: #` + style.Box + `;
+			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
+		}`,
+		`.repobox:hover { fill: rgba(255,0,0,0.8);}`,
+		`.repobox:hover rect {filter: blur(30px);}`,
+		`.box {
+			fill: #` + style.Background + `;
+			border: 3px solid #` + style.Border + `;
+			stroke: #` + style.Border + `;
+			stroke-width: ` + strconv.Itoa(strokewidth) + `px;
+		}`,
 		`</style>`,
-		`<rect x="0" y="0" class="box" width="` + strconv.Itoa(width) + `" height="` + strconv.Itoa(height) + `" rx="15" style="stroke-width:3;stroke:` + style.Border + `"/>`,
-		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="` + style.Border + `"/>`,
-		fmt.Sprintf(`<text x="20" y="25" class="title">%s</text>`, ToTitleCase(org)),
+		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, ToTitleCase(org)),
+	}
+	txt := func(content string, posX int, posY int, class ...string) string {
+		return fmt.Sprintf(`<text x="%v" y="%v" class="%v">%v</text>`, posX, posY, strings.Join(class, " "), content)
 	}
 	bodyAdd := func(content string) string {
 		body = append(body, content)
 		return content
 	}
-	pos := 80
-	pos2 := 0
-	row := func(content []string, posX int, posY int) string {
-		bodyAdd(`<g transform="translate(` + strconv.Itoa(posX) + `,` + strconv.Itoa(posY) + `) rotate(0)">`)
+
+	// Calculate where repositoryboxes should begin
+	posY := titleboxheight + padding
+	originalpos := posY
+	posX := 0
+	row := func(content []string) {
+		bodyAdd(`<g class="repobox" transform="translate(` + strconv.Itoa(posX+padding) + `,` + strconv.Itoa(posY) + `) rotate(0)">`)
 		for _, v := range content {
 			bodyAdd(v)
-			posY += 30
 		}
 		bodyAdd(`</g>`)
-		if posY+100 >= height {
-			pos2 += 290
-			pos = -40
+
+		// check if next box will fit into card
+		if posY+boxheight+(boxheight+padding) >= height {
+			posX += boxwidth + padding
+			posY = originalpos - (boxheight + padding)
 		}
-		return "test"
 	}
-	fmt.Println(len(responseObject))
+
+	// Make sure it is not longer than 10 repos
+	if len(responseObject) > 10 {
+		responseObject = responseObject[:10]
+	}
 
 	bodyAdd(`<g>`)
 	for i, r := range responseObject {
-		// response2, err := http.Get("https://api.github.com/repos/" + org + "/CameraLight/contents/")
-		// if err != nil {
-		// 	panic(err.Error())
-		// }
+		response2, err := http.Get("https://api.github.com/repos/" + org + "/" + r.Name + "/stats/commit_activity")
+		if err != nil {
+			panic(err.Error())
+		}
 
-		// responseData2, err := ioutil.ReadAll(response2.Body)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// var responseContent Content
-		// json.Unmarshal(responseData2, &responseContent)
-		fmt.Println(strconv.Itoa(i) + " - " + r.Name)
+		responseData2, err := ioutil.ReadAll(response2.Body)
+		if err != nil {
+			panic(err)
+		}
+		var responseContent Activity
+		json.Unmarshal(responseData2, &responseContent)
 
+		totalCommits := 0
+		// Slice to last 4. Get commit activity from last 4 weeks
+		if len(responseContent) > 4 {
+			responseContent = responseContent[len(responseContent)-4:]
+			for _, g := range responseContent {
+				totalCommits += g.Total
+			}
+		}
+		fmt.Printf("%v - %v with %v total commits", i+1, r.Name, totalCommits)
+		r.Commits = totalCommits
 		row([]string{
-			`<rect x="0" y="0" rx="5" width="270" height="100" fill="blue" style="stroke-width:3;stroke:` + style.Border + `"/>`,
+			fmt.Sprintf(`<rect x="0" y="0" rx="5" class="repobox" width="%v" height="%v" />`, boxwidth, boxheight),
 			`<a href="` + r.HTMLURL + `"><text x="5" y="30" class="title">` + r.Name + `</text></a>`,
-			`<text x="5" y="60" class="text">Language - ` + r.Language + `</text>`,
-			`<text x="5" y="90" class="text">Issues - ` + strconv.Itoa(r.OpenIssuesCount) + `</text>`,
-		}, pos2+(padding*2), pos)
-		pos += 120
+			`<text x="5" y="50" class="text">Language - ` + r.Language + `</text>`,
+			txt(`Language - `+r.Language, 5, 50, `text`),
+			`<text x="5" y="70" class="text">Issues - ` + strconv.Itoa(r.OpenIssuesCount) + `</text>`,
+			`<text x="5" y="90" class="text">Commits - ` + strconv.Itoa(totalCommits) + `</text>`,
+		})
+		if posX+boxwidth >= width {
+			width = posX + padding
+			break
+		}
+		posY += boxheight + padding
 	}
 	bodyAdd(`</g>`)
+	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, style.Border)}, body...)
+	body = append([]string{fmt.Sprintf(`<rect x="0" y="0" class="box" width="%v" height="%v" rx="15"  />`, width, height)}, body...)
+	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
+	body = append([]string{svgTag}, body...)
 	bodyAdd(`</svg>`)
 	newcard := OrgCard{title, org, style, body}
 	return newcard
