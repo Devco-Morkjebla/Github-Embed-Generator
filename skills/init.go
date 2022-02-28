@@ -96,7 +96,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 	}
 	for _, v := range languages {
 
-		icon := fmt.Sprintf(`./icons/%v`, v)
+		icon := fmt.Sprintf(`../icons/%v.png`, v)
 		// icon := fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-original.svg`, v, v)
 		// if v == "tailwindcss" {
 		// 	icon = fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-plain.svg`, v, v)
