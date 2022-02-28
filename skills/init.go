@@ -96,9 +96,9 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 	}
 	for _, v := range languages {
 
-		icon := fmt.Sprintf(`https://raw.githubusercontent.com/ArvidWedtstein/ArvidWedtstein/main/icons/%v/%v-original.svg`, v, v)
+		icon := fmt.Sprintf(`https://raw.githubusercontent.com/devicons/devicon/master/icons/%v/%v-original.svg`, v, v)
 		if v == "tailwindcss" {
-			icon = fmt.Sprintf(`https://raw.githubusercontent.com/ArvidWedtstein/ArvidWedtstein/main/icons/%v/%v-plain.svg`, v, v)
+			icon = fmt.Sprintf(`https://raw.githubusercontent.com/devicons/devicon/master/icons/%v/%v-plain.svg`, v, v)
 		}
 		img := fmt.Sprintf(`<image x="%v" y="%v" href="%v" height="%v" width="%v"/>`, boxwidth-imgsize-padding, boxheight-imgsize-padding, icon, imgsize, imgsize)
 
