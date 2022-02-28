@@ -94,6 +94,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 		"oxygene":                        "#cdd0e3",
 		"tsql":                           "#cdd0e3",
 		"tailwindcss":                    "#38BDF8",
+		"tailwind":                       "#38BDF8",
 		"emacs lisp":                     "#c065db",
 		"mupad":                          "null",
 		"openrc runscript":               "null",
@@ -246,6 +247,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 		"ioke":                           "#078193",
 		"vim script":                     "#199f4b",
 		"dockerfile":                     "#384d54",
+		"docker":                         "#384d54",
 		"markdown":                       "#083fa1",
 		"chapel":                         "#8dc63f",
 		"fantom":                         "#14253c",
@@ -477,11 +479,9 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 		}`,
 		`.title { font: 25px sans-serif; fill: #` + style.Title + `}`,
 		`.repobox { 
-			// fill: #` + style.Box + `;
+			fill: #` + style.Box + `;
 			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
 		}`,
-		`.repobox:hover { fill: rgba(255,0,0,0.8);}`,
-		`.repobox:hover rect {stroke-width: ` + strconv.Itoa(strokewidth+3) + `px;}`,
 		`.box {
 			fill: #` + style.Background + `;
 			border: 3px solid #` + style.Border + `;
@@ -532,19 +532,25 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 
 	row := func(content []string, lang string) {
 
-		bodyAdd(fmt.Sprintf(`<g class="" fill="%v" title="%v" transform="translate(%v,%v) rotate(0)">`, languageColor[lang], lang, posX+padding, posY))
+		if languageColor[lang] == "" {
+			bodyAdd(fmt.Sprintf(`<g class="repobox" title="%v" transform="translate(%v,%v) rotate(0)">`, lang, posX+padding, posY))
+		} else {
+			bodyAdd(fmt.Sprintf(`<g fill="%v" title="%v" transform="translate(%v,%v) rotate(0)">`, languageColor[lang], lang, posX+padding, posY))
+		}
+
 		for _, v := range content {
 			bodyAdd(v)
 		}
 		bodyAdd(`</g>`)
 
+		newheight = posY + boxheight + padding
 		// check if next box will fit into card
 		if posX+boxwidth+(boxwidth+padding) >= width {
 			posY += boxheight + padding
 			newwidth = posX + boxwidth + (padding * 2)
 			posX = originalpos - (boxwidth + padding)
 		}
-		newheight = posY
+
 	}
 	for _, v := range languages {
 
@@ -556,7 +562,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 		// img := fmt.Sprintf(`<image x="%v" y="%v" href="%v" height="%v" width="%v"/>`, boxwidth-imgsize-padding, boxheight-imgsize-padding, icon, imgsize, imgsize)
 
 		str := languageColor[v]
-		if colorToDark(str) {
+		if languageColor[v] != "" && colorToDark(str) {
 			row([]string{
 				fmt.Sprintf(`<rect x="0" y="0" rx="5" class="" width="%v" height="%v" />`, boxwidth, boxheight),
 				fmt.Sprintf(`<text x="%v" y="%v" class="textwhite">%v</text>`, padding, (boxheight / 2), ToTitleCase(v)),

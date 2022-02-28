@@ -146,6 +146,7 @@ func getSkills(c *gin.Context) {
 	backgroundcolor := c.Request.FormValue("backgroundcolor")
 	textcolor := c.Request.FormValue("textcolor")
 	textfont := c.Request.FormValue("textfont")
+	boxcolor := c.Request.FormValue("boxcolor")
 	if title == "" {
 		title = "Skills"
 	}
@@ -167,11 +168,15 @@ func getSkills(c *gin.Context) {
 	if textfont == "" {
 		textfont = "Helvetica"
 	}
+	if !r.MatchString(boxcolor) {
+		boxcolor = "ffffff"
+	}
 	color.Border = bordercolor
 	color.Title = titlecolor
 	color.Background = backgroundcolor
 	color.Text = textcolor
 	color.Textfont = textfont
+	color.Box = boxcolor
 
 	newCard := skills.Skills(title, languages, color)
 
