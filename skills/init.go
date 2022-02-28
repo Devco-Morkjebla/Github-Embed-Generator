@@ -29,8 +29,8 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 	titleboxheight := 50
 	padding := 10
 	strokewidth := 3
-	boxwidth := 100
-	boxheight := 100
+	boxwidth := 60
+	boxheight := 60
 	body := []string{
 		`<script type="application/ecmascript"> <![CDATA[
 			function skill_hover(evt) {
@@ -76,7 +76,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 	posY := titleboxheight + padding
 
 	posX := 0
-	imgsize := 80
+	imgsize := boxwidth - (padding * 2)
 	originalpos := posX
 	newwidth := width
 	row := func(content []string, lang string) {
@@ -96,10 +96,11 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 	}
 	for _, v := range languages {
 
-		icon := fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-original.svg`, v, v)
-		if v == "tailwindcss" {
-			icon = fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-plain.svg`, v, v)
-		}
+		icon := fmt.Sprintf(`./icons/%v`, v)
+		// icon := fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-original.svg`, v, v)
+		// if v == "tailwindcss" {
+		// 	icon = fmt.Sprintf(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/%v/%v-plain.svg`, v, v)
+		// }
 		img := fmt.Sprintf(`<image x="%v" y="%v" href="%v" height="%v" width="%v"/>`, boxwidth-imgsize-padding, boxheight-imgsize-padding, icon, imgsize, imgsize)
 
 		row([]string{
