@@ -44,7 +44,7 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 		}`,
 		`.title { font: 25px sans-serif; fill: #` + style.Title + `}`,
 		`.repobox { 
-			fill: #` + style.Box + `;
+			// fill: #` + style.Box + `;
 			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
 		}`,
 		`.box {
