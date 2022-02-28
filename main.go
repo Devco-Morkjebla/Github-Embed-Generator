@@ -27,8 +27,8 @@ func main() {
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
 	router.GET("/mostactivity", getMostactivity)
-	router.Run("localhost:8080")
-	// router.Run()
+	// router.Run("localhost:8080")
+	router.Run()
 
 }
 
@@ -169,7 +169,7 @@ func getSkills(c *gin.Context) {
 		textfont = "Helvetica"
 	}
 	if !r.MatchString(boxcolor) {
-		boxcolor = "ffffff"
+		boxcolor = "dddddd"
 	}
 	color.Border = bordercolor
 	color.Title = titlecolor
