@@ -13,6 +13,7 @@ You can customize the appearance of your `Card` however you wish with URL params
 - `textcolor` - Body text color _(hex color)_
 - `bordercolor` - Card's border color _(hex color)_.
 - `backgroundcolor` - Card's background color _(hex color)_
+- `boxcolor` - Card's languages color _(hex color)_
 - `title` - Card's custom title _(string)_
 Example: `https://arvidgithubembed.herokuapp.com/skills?languages=php,mysql,javascript,typescript&title=test`
 
