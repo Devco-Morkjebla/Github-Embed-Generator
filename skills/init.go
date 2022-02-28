@@ -573,10 +573,10 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 
 	// adjust the svg size to the content
 	if newwidth != width {
-		width = newwidth
+		width = newwidth + strokewidth
 	}
 	if newheight != height {
-		height = newheight
+		height = newheight + strokewidth
 	}
 
 	// Line on top
