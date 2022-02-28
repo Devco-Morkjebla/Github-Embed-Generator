@@ -9,7 +9,8 @@ import (
 
 	"regexp"
 
-	// "github.com/alexsasharegan/dotenv"
+	"githubembedapi/skills"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -137,47 +138,42 @@ func rankList(c *gin.Context) {
 
 func getSkills(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
+	var color skills.Styles
 	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
-
-	body := []string{`<svg width="500" height="500" fill="none" viewBox="0 0 500 500"
-	xmlns="http://www.w3.org/2000/svg">`}
-
-	// Generate body for the languages
-	for i, s := range languages {
-		text := fmt.Sprintf(`<text x="30" y="%d">%s</text>`, i*10, s)
-		body = append(body, text)
+	title := c.Request.FormValue("title")
+	bordercolor := c.Request.FormValue("bordercolor")
+	titlecolor := c.Request.FormValue("titlecolor")
+	backgroundcolor := c.Request.FormValue("backgroundcolor")
+	textcolor := c.Request.FormValue("textcolor")
+	textfont := c.Request.FormValue("textfont")
+	if title == "" {
+		title = "Skills"
 	}
-	body = append(body, `</svg>`)
 
-	fmt.Println(strings.Join(body, "\n"))
-	var svg string = `<svg width="500" height="500" fill="none" viewBox="0 0 500 500"
-	xmlns="http://www.w3.org/2000/svg">
-	<style>
-        .small { font: 20px sans-serif; fill: black}
-        .heavy { font: bold 30px sans-serif; }
+	r, _ := regexp.Compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+	if !r.MatchString(bordercolor) {
+		bordercolor = "000000"
+	}
+	if !r.MatchString(titlecolor) {
+		titlecolor = "000000"
+	}
+	fmt.Println(r.MatchString(backgroundcolor))
+	if !r.MatchString(backgroundcolor) {
+		backgroundcolor = "ffffff"
+	}
+	if !r.MatchString(textcolor) {
+		textcolor = "000000"
+	}
+	if textfont == "" {
+		textfont = "Helvetica"
+	}
+	color.Border = bordercolor
+	color.Title = titlecolor
+	color.Background = backgroundcolor
+	color.Text = textcolor
+	color.Textfont = textfont
 
-    </style>
-	<defs>
-		<linearGradient gradientTransform="rotate(30)" id="redbluegreenpurple">
-			<stop stop-color="red" offset="0%"/>
-			<stop stop-color="blue" offset="25%"/>
-			<stop stop-color="green" offset="50%"/>
-			<stop stop-color="purple" offset="75%"/>
-		</linearGradient>
-	</defs>
-	<rect x="0" y="0" width="200" height="200" rx="15" fill="url(#redbluegreenpurple)"/>
-	<image x="20" y="20" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" height="30" width="30"/>
-	<text x="60" y="40" class="small">php</text>
-	<image x="20" y="50" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" height="30" width="30"/>
-	<text x="60" y="70" class="small">go</text>
-	<image x="20" y="80" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" height="30" width="30"/>
-	<text x="60" y="100" class="small">typescript</text>
-	<image x="20" y="110" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" height="30" width="30"/>
-	<text x="60" y="130" class="small">mysql</text>
-	<image x="20" y="140" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="30" width="30"/>
-	<text x="60" y="160" class="small">javascript</text>
-</svg>
-    `
+	newCard := skills.Skills(title, languages, color)
 
-	c.String(http.StatusOK, svg)
+	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }
