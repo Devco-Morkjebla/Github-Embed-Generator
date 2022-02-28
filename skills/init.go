@@ -573,15 +573,15 @@ func Skills(title string, languages []string, style Styles) Skillscard {
 
 	// adjust the svg size to the content
 	if newwidth != width {
-		width = newwidth + strokewidth
+		width = newwidth
 	}
 	if newheight != height {
-		height = newheight + strokewidth
+		height = newheight
 	}
 
 	// Line on top
 	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, style.Border)}, body...)
-	body = append([]string{fmt.Sprintf(`<rect x="0" y="0" class="box" width="%v" height="%v" rx="15"  />`, width, height)}, body...)
+	body = append([]string{fmt.Sprintf(`<rect x="%v" y="%v" class="box" width="%v" height="%v" rx="15"  />`, strokewidth/2, strokewidth/2, width, height)}, body...)
 	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
 	body = append([]string{svgTag}, body...)
 	bodyAdd(`</svg>`)
