@@ -2,6 +2,7 @@ package skills
 
 import (
 	"fmt"
+	"githubembedapi/card/style"
 	"githubembedapi/icons"
 	"math"
 	"strconv"
@@ -9,10 +10,10 @@ import (
 )
 
 type Skillscard struct {
-	Title  string   `json:"title"`
-	Skills []string `json:"skills"`
-	Styles Styles   `json:"styles"`
-	Body   []string `json:"body"`
+	Title  string       `json:"title"`
+	Skills []string     `json:"skills"`
+	Styles style.Styles `json:"styles"`
+	Body   []string     `json:"body"`
 }
 
 type Styles struct {
@@ -24,7 +25,7 @@ type Styles struct {
 	Box        string
 }
 
-func Skills(title string, languages []string, style Styles) Skillscard {
+func Skills(title string, languages []string, style style.Styles) Skillscard {
 
 	height := 700
 	width := 600

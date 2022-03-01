@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"githubembedapi/card"
+	"githubembedapi/card/style"
 	"githubembedapi/organization"
 	"net/http"
 	"strings"
@@ -27,8 +28,10 @@ func main() {
 	router.GET("/skills", getSkills)
 	router.GET("/card", getCard)
 	router.GET("/mostactivity", getMostactivity)
-	// router.Run("localhost:8080")
-	router.Run()
+	router.Run("localhost:8080")
+	// router.Run()
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 }
 
@@ -138,45 +141,25 @@ func rankList(c *gin.Context) {
 
 func getSkills(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
-	var color skills.Styles
+
+	// Define styles
+	var color style.Styles
 	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
+
+	styles := map[string]string{
+		color.Title:      c.Request.FormValue("titlecolor"),
+		color.Border:     c.Request.FormValue("bordercolor"),
+		color.Background: c.Request.FormValue("backgroundcolor"),
+		color.Text:       c.Request.FormValue("textcolor"),
+		color.Box:        c.Request.FormValue("boxcolor"),
+	}
+
+	color = style.CheckHex(styles)
 	title := c.Request.FormValue("title")
-	bordercolor := c.Request.FormValue("bordercolor")
-	titlecolor := c.Request.FormValue("titlecolor")
-	backgroundcolor := c.Request.FormValue("backgroundcolor")
-	textcolor := c.Request.FormValue("textcolor")
-	textfont := c.Request.FormValue("textfont")
-	boxcolor := c.Request.FormValue("boxcolor")
+
 	if title == "" {
 		title = "Skills"
 	}
-
-	r, _ := regexp.Compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
-	if !r.MatchString(bordercolor) {
-		bordercolor = "000000"
-	}
-	if !r.MatchString(titlecolor) {
-		titlecolor = "000000"
-	}
-	fmt.Println(r.MatchString(backgroundcolor))
-	if !r.MatchString(backgroundcolor) {
-		backgroundcolor = "ffffff"
-	}
-	if !r.MatchString(textcolor) {
-		textcolor = "000000"
-	}
-	if textfont == "" {
-		textfont = "Helvetica"
-	}
-	if !r.MatchString(boxcolor) {
-		boxcolor = "dddddd"
-	}
-	color.Border = bordercolor
-	color.Title = titlecolor
-	color.Background = backgroundcolor
-	color.Text = textcolor
-	color.Textfont = textfont
-	color.Box = boxcolor
 
 	newCard := skills.Skills(title, languages, color)
 
