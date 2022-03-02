@@ -151,7 +151,7 @@ type Res struct {
 	GITHUB string
 }
 
-func MostactivityCard(title string, org string, style Styles, github_token string) OrgCard {
+func MostactivityCard(title, org string, style Styles, github_token string) OrgCard {
 	apiurl := "https://api.github.com/orgs/" + org + "/repos"
 	// Create a new request using http
 	reqAPI, err := http.NewRequest("GET", apiurl, nil)

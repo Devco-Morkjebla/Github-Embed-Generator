@@ -5,12 +5,12 @@ import (
 )
 
 type Styles struct {
-	Title      string
-	Border     string
-	Background string
-	Text       string
-	Textfont   string
-	Box        string
+	Title,
+	Border,
+	Background,
+	Text,
+	Textfont,
+	Box string
 }
 
 func CheckHex(str map[string]string) Styles {

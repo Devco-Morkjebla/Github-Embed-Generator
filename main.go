@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"githubembedapi/card"
 	"githubembedapi/card/style"
 	"githubembedapi/organization"
+	"githubembedapi/rank"
 	"net/http"
 	"strings"
 
@@ -26,29 +26,12 @@ func main() {
 	router := gin.Default()
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
-	router.GET("/card", getCard)
 	router.GET("/mostactivity", getMostactivity)
-	// router.Run("localhost:8080")
-	router.Run()
-
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	router.Run("localhost:8080")
+	// router.Run()
 
 }
 
-func getCard(c *gin.Context) {
-	c.Header("Content-Type", "image/svg+xml")
-	colors := []string{"red", "blue"}
-	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
-	title := c.Request.URL.Query().Get("title")
-	if len(title) > 0 {
-		title = "Languages"
-	}
-	newCard := card.Newcard(title, languages, colors)
-
-	fmt.Println(newCard)
-
-	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
-}
 func getMostactivity(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	var color organization.Styles
@@ -99,7 +82,7 @@ func getMostactivity(c *gin.Context) {
 }
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
-	var color card.Styles
+	var color rank.Styles
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
 	title := c.Request.FormValue("title")
 	bordercolor := c.Request.FormValue("bordercolor")
@@ -134,7 +117,7 @@ func rankList(c *gin.Context) {
 	color.Background = backgroundcolor
 	color.Text = textcolor
 	color.Textfont = textfont
-	newCard := card.Rankcard(title, users, color)
+	newCard := rank.Rankcard(title, users, color)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
 }

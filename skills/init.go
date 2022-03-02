@@ -36,6 +36,17 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 	boxheight := 60
 	body := []string{
 		`<style>`,
+		`@keyframes gradient {
+			0% {
+				background-position: 0% 50%;
+			}
+			50% {
+				background-position: 100% 50%;
+			}
+			100% {
+				background-position: 0% 50%;
+			}
+		}`,
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
 		`.text { font: 20px sans-serif; fill: #` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
 		`.textwhite { font: 20px sans-serif; fill: #ffffff; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
@@ -43,7 +54,12 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 			font: 25px sans-serif; 
 			fill: black
 		}`,
-		`.title { font: 25px sans-serif; fill: #` + style.Title + `}`,
+		`.title { 
+			font: 25px sans-serif; 
+			// fill: #` + style.Title + `;
+			fill: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+			animation: gradient 15s ease infinite;
+		}`,
 		`.repobox { 
 			fill: #` + style.Box + `;
 			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
