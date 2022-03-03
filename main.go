@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"githubembedapi/card"
 	"githubembedapi/card/style"
 	"githubembedapi/organization"
+	"githubembedapi/project"
 	"githubembedapi/rank"
 	"net/http"
 	"strings"
@@ -27,14 +27,12 @@ func main() {
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/mostactivity", getMostactivity)
+	router.GET("/project", projectcard)
 	router.Run("localhost:8080")
 	// router.Run()
 
 }
 
-func test() {
-	fmt.Println(card.CalculateCircleProgress(70, 20))
-}
 func getMostactivity(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	var color organization.Styles
@@ -82,6 +80,21 @@ func getMostactivity(c *gin.Context) {
 	newCard := organization.MostactivityCard(title, org, color, github_token)
 
 	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
+}
+func projectcard(c *gin.Context) {
+	c.Header("Content-Type", "image/svg+xml")
+	var color style.Styles
+	styles := map[string]string{
+		color.Title:      c.Request.FormValue("titlecolor"),
+		color.Border:     c.Request.FormValue("bordercolor"),
+		color.Background: c.Request.FormValue("backgroundcolor"),
+		color.Text:       c.Request.FormValue("textcolor"),
+		color.Box:        c.Request.FormValue("boxcolor"),
+	}
+	repo := c.Request.FormValue("repo")
+	color = style.CheckHex(styles)
+	c.String(http.StatusOK, project.Project(repo, color))
+
 }
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")

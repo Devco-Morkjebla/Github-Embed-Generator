@@ -158,7 +158,7 @@ func MostactivityCard(title, org string, style Styles, github_token string) OrgC
 
 	// add authorization header to the req
 	reqAPI.Header.Set("Accept", "application/vnd.heroku+json; version=3")
-	reqAPI.Header.Set("Authorization", "Bearer 095298d5-2ada-41f0-82ba-88419b5e6600")
+	reqAPI.Header.Set("Authorization", "Bearer ")
 	if err != nil {
 		panic(err.Error())
 	}
