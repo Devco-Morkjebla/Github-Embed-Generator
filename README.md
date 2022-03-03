@@ -42,3 +42,5 @@ Example:
 
 //https://awesome-github-stats.azurewebsites.net/user-stats/lartrax/rank
 //https://api.github.com/repos/devco-morkjebla/unzippy/stats/commit_activity
+
+//https://docs.github.com/en/rest/reference/metrics
