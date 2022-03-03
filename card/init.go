@@ -16,6 +16,10 @@ func (card Card) GetStyles() {
 
 }
 
+func CalculateCircleProgress(progress, radius int) {
+
+}
+
 func GenerateCard(style style.Styles) []string {
 	var card Card
 	card.Style = style
