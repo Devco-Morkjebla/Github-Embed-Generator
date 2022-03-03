@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"githubembedapi/card/style"
 	"githubembedapi/organization"
 	"githubembedapi/rank"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"regexp"
@@ -15,23 +18,49 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//https://go.dev/doc/tutorial/web-service-gin
+type Icons struct {
+	IconName xml.Name `xml:"icons"`
+	Icons    []Icon   `xml:"icon"`
+}
+
+type Icon struct {
+	IconName xml.Name `xml:"icon"`
+	Name     string   `xml:"name"`
+	SVG      string   `xml:"svg"`
+}
 
 func main() {
-	// err := dotenv.Load()
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 	router := gin.Default()
 	router.GET("/ranklist", rankList)
 	router.GET("/skills", getSkills)
 	router.GET("/mostactivity", getMostactivity)
-	router.Run("localhost:8080")
+	// router.Run("localhost:8080")
 	// router.Run()
+
+	test()
 
 }
 
+func test() {
+	fmt.Println("Fetching XML")
+	xmlFile, err := os.Open("icons.xml")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer xmlFile.Close()
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+
+	var icons Icons
+
+	xml.Unmarshal(byteValue, &icons)
+
+	for i := 0; i < 10; i++ {
+		fmt.Println("User Name: " + icons.Icons[i].Name)
+	}
+}
 func getMostactivity(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	var color organization.Styles
