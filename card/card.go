@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"githubembedapi/card/style"
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -27,8 +28,8 @@ func (card Card) GetStyles(customStyles ...string) string {
 	return strings.Join(style, "\n")
 }
 
-func CalculateCircleProgress(progress int, radius float64) float64 {
-	var c = math.Pi * (radius * 2)
+func CircleProgressbar(progress, radius, strokewidth, posX, posY int, color string, class ...string) string {
+	dasharray := (2 * math.Pi * float64(radius))
 
 	if progress < 0 {
 		progress = 0
@@ -37,9 +38,34 @@ func CalculateCircleProgress(progress int, radius float64) float64 {
 		progress = 100
 	}
 
-	return ((100 - float64(progress)) / 100) * c
-}
+	dashoffset := ((100 - float64(progress)) / 100) * dasharray
+	progressbar := fmt.Sprintf(`<circle class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
+		strings.Join(class, " "), posX, posY, radius, color, strokewidth, dasharray, dashoffset)
 
+	return progressbar
+}
+func GetProgressAnimation(radius, progress int) string {
+	dasharray := (2 * math.Pi * float64(radius))
+
+	if progress < 0 {
+		progress = 0
+	}
+	if progress > 100 {
+		progress = 100
+	}
+
+	dashoffset := ((100 - float64(progress)) / 100) * dasharray
+	return `
+	@keyframes CircleProgressbar` + strconv.Itoa(radius) + ` {
+		from {
+			stroke-dashoffset: ` + strconv.Itoa(int(dasharray)) + ` 
+		}
+		to {
+			stroke-dashoffset: ` + strconv.Itoa(int(dashoffset)) + `
+		}
+	}
+	`
+}
 func GenerateCard(style style.Styles, body []string, width, height int, customStyles ...string) []string {
 	var card Card
 	card.Style = style
