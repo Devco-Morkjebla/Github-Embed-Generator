@@ -1,6 +1,6 @@
 #### Go API project for generating svg for github embed
 
-## better description will come soon.
+## Better description will come soon.
 
 ## Routes
 Languages are comma seperated
