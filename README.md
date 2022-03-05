@@ -2,6 +2,7 @@
 
 ## Better description & docs will come soon. (When i have time left)
 
+
 ## Routes
 Languages are comma seperated
 > /skills/:languages
@@ -35,6 +36,14 @@ Example: `https://arvidgithubembed.herokuapp.com/skills?languages=php,mysql,java
 
 Example: 
 `/ranklist?users=lartrax,arvidwedtstein&bordercolor=black&titlecolor=red&textcolor=green&backgroundcolor=yellow&title=test`
+
+# Contribution
+
+Contributions are welcome!
+Feel free to open a pull request or an issue
+
+Make sure your request is meaningful and you have tested the app locally before submitting a pull request.
+
 
 
 > `/mostactivity?org=devco-morkjebla`
