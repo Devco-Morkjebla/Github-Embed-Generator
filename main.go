@@ -94,7 +94,6 @@ func projectcard(c *gin.Context) {
 	repo := c.Request.FormValue("repo")
 	color = style.CheckHex(styles)
 	c.String(http.StatusOK, project.Project(repo, color))
-
 }
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")

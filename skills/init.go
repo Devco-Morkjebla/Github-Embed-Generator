@@ -113,7 +113,6 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 	newheight := height
 
 	row := func(content []string, lang string) {
-
 		bodyAdd(fmt.Sprintf(`<g class="repobox" title="%v" transform="translate(%v,%v) rotate(0)">`, lang, posX+padding, posY))
 
 		for _, v := range content {
@@ -128,8 +127,8 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 			newwidth = posX + boxwidth + (padding * 2)
 			posX = originalpos - (boxwidth + padding)
 		}
-
 	}
+
 	for _, v := range languages {
 
 		icon := icons.Icons(v)
