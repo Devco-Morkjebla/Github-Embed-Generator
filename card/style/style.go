@@ -86,15 +86,15 @@ func HexagonPattern() string {
 	</pattern>`
 }
 func CubePattern() string {
-	return `<pattern id="pattern-cubes" x="0" y="126" patternUnits="userSpaceOnUse" width="126" height="200" viewBox="0 0 10 16"> 
+	return `<pattern id="pattern-cubes" x="0" y="63" patternUnits="userSpaceOnUse" width="31" height="50" viewBox="0 0 10 16"> 
      
-	<g id="cube">
-		<path class="left-shade" d="M0 0l5 3v5l-5 -3z"></path>
-		<path class="right-shade" d="M10 0l-5 3v5l5 -3"></path>
-	</g>
+		<g id="cube">
+			<path fill="darkblue" class="left-shade" d="M0 0l5 3v5l-5 -3z"></path>
+			<path fill="blue" class="right-shade" d="M10 0l-5 3v5l5 -3"></path>
+		</g>
    
-	  <use x="5" y="8" href="#cube"></use>
-	  <use x="-5" y="8" href="#cube"></use>
+		<use fill="darkblue" x="5" y="8" href="#cube"></use>
+		<use fill="blue" x="-5" y="8" href="#cube"></use>
 
 	</pattern>`
 }
@@ -162,18 +162,10 @@ func Blur(amount int) string {
 	<feGaussianBlur in="SourceGraphic" stdDeviation="%v" />
   </filter>`, amount, amount)
 }
-func Border() string {
-	return `<filter id="border" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="120">
-	<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
-	<feOffset in="blur" dx="4" dy="4" result="offsetBlur" />
-	<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
-	  <fePointLight x="-5000" y="-10000" z="20000" />
-	</feSpecularLighting>
-	<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
-	<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint" />
-	<feMerge>
-	  <feMergeNode in="offsetBlur" />
-	  <feMergeNode in="litPaint" />
-	</feMerge>
+func DropShadowColor() string {
+	return `<filter id="dropshadowcolor" x="0" y="0" width="200%" height="200%">
+	<feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
+	<feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
+	<feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
   </filter>`
 }

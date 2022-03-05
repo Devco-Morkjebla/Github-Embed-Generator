@@ -18,7 +18,7 @@ func (card Card) GetStyles(customStyles ...string) string {
 	var style = []string{
 		`<style>`,
 		`.title { font: 25px sans-serif; fill: #` + card.Style.Title + `}`,
-		`.text { font: 20px sans-serif; fill: #` + card.Style.Text + `; font-family: ` + card.Style.Textfont + `; text-decoration: underline;}`,
+		`.text { font: 20px sans-serif; fill: #` + card.Style.Text + `; font-family: ` + card.Style.Textfont + `;}`,
 	}
 	if cap(customStyles) > 0 {
 		style = append(style, customStyles...)
@@ -60,7 +60,7 @@ func CircleProgressbar(progress, radius, strokewidth, posX, posY int, color stri
 	}
 
 	dashoffset := ((100 - float64(progress)) / 100) * dasharray
-	progressbar := fmt.Sprintf(`<circle stroke-linecap="butt" style="animation: CircleProgressbar%v 3s forwards ease-in-out; z-index: 2;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
+	progressbar := fmt.Sprintf(`<circle stroke-linecap="butt" filter="filter0_d_0_1" style="animation: CircleProgressbar%v 3s forwards ease-in-out; z-index: 2;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
 		radius, strings.Join(class, " "), posX, posY, radius, color, strokewidth, dasharray, dashoffset)
 	return progressbar, GetProgressAnimation(progress, radius)
 }
