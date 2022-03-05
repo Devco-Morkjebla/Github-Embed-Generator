@@ -60,10 +60,8 @@ func CircleProgressbar(progress, radius, strokewidth, posX, posY int, color stri
 	}
 
 	dashoffset := ((100 - float64(progress)) / 100) * dasharray
-	progressbar := fmt.Sprintf(`<circle filter="filter0_d_0_1" style="animation: CircleProgressbar%v 3s forwards ease-in-out; z-index: 2;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
+	progressbar := fmt.Sprintf(`<circle stroke-linecap="butt" style="animation: CircleProgressbar%v 3s forwards ease-in-out; z-index: 2;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
 		radius, strings.Join(class, " "), posX, posY, radius, color, strokewidth, dasharray, dashoffset)
-	progressbar += fmt.Sprintf(`<circle style="z-index: 1;" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
-		posX, posY, radius+10, "black", strokewidth+10, dasharray, 400)
 	return progressbar, GetProgressAnimation(progress, radius)
 }
 func GetProgressAnimation(progress, radius int) string {

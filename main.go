@@ -85,11 +85,11 @@ func projectcard(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
 	var color style.Styles
 	styles := map[string]string{
-		color.Title:      c.Request.FormValue("titlecolor"),
-		color.Border:     c.Request.FormValue("bordercolor"),
-		color.Background: c.Request.FormValue("backgroundcolor"),
-		color.Text:       c.Request.FormValue("textcolor"),
-		color.Box:        c.Request.FormValue("boxcolor"),
+		"Title":      c.Request.FormValue("titlecolor"),
+		"Border":     c.Request.FormValue("bordercolor"),
+		"Background": c.Request.FormValue("backgroundcolor"),
+		"Text":       c.Request.FormValue("textcolor"),
+		"Box":        c.Request.FormValue("boxcolor"),
 	}
 	repo := c.Request.FormValue("repo")
 	color = style.CheckHex(styles)

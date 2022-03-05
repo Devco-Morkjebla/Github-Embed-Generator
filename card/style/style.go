@@ -18,12 +18,12 @@ type Styles struct {
 func CheckHex(str map[string]string) Styles {
 	var style Styles
 	r, _ := regexp.Compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
-	if !r.MatchString(str["Border"]) {
+	if !r.MatchString(str[style.Border]) {
 		style.Border = "000000"
 	} else {
 		style.Border = str["Border"]
 	}
-	if !r.MatchString(str["Title"]) {
+	if !r.MatchString(str[style.Title]) {
 		style.Title = "000000"
 	} else {
 		style.Title = str["Border"]
@@ -61,7 +61,7 @@ func RadialGradient(id string, colors []string) string {
 }
 func LinearGradient(id string, colors []string) string {
 	gradient := []string{
-		fmt.Sprintf(`<linearGradient x="0" y="0" x2="200" id="%v" gradientUnits="userSpaceOnUse">`, id),
+		fmt.Sprintf(`<linearGradient x="0" y="0" x2="100" id="%v" gradientUnits="userSpaceOnUse">`, id),
 	}
 	if cap(colors) < 2 {
 		panic(`Gradient must have 2 colors`)
@@ -104,8 +104,17 @@ func StarPattern() string {
 	  </pattern>`
 }
 func StarsFilter() string {
+	// feColorMatrix
+	//------------------
+	//	   R G B A M
+	//--------------
+	// R | 1 0 0 0 0
+	// G | 0 1 0 0 0
+	// B | 0 0 1 0 0
+	// A | 0 0 0 1 0
 	return `<filter id="stars">
 	<feTurbulence baseFrequency="0.2"/>
+	
 	<feColorMatrix values="0 0 0 9 -4
 						   0 0 0 9 -4
 						   0 0 0 9 -4
@@ -147,4 +156,24 @@ func DropShadowRing1() string {
 	<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1"/>
 	<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
 	</filter>`
+}
+func Blur(amount int) string {
+	return fmt.Sprintf(`<filter id="blur%v" x="0" y="0">
+	<feGaussianBlur in="SourceGraphic" stdDeviation="%v" />
+  </filter>`, amount, amount)
+}
+func Border() string {
+	return `<filter id="border" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="120">
+	<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+	<feOffset in="blur" dx="4" dy="4" result="offsetBlur" />
+	<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+	  <fePointLight x="-5000" y="-10000" z="20000" />
+	</feSpecularLighting>
+	<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
+	<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint" />
+	<feMerge>
+	  <feMergeNode in="offsetBlur" />
+	  <feMergeNode in="litPaint" />
+	</feMerge>
+  </filter>`
 }
