@@ -3,6 +3,8 @@
 ## Better description & docs will come soon. (When i have time left)
 
 
+![](https://img.shields.io/github/go-mod/go-version/arvidwedtstein/github-embed-generator?style=for-the-badge)
+
 ## Routes
 Languages are comma seperated
 > /skills/:languages
