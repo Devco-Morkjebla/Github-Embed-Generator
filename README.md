@@ -49,11 +49,7 @@ Make sure your request is meaningful and you have tested the app locally before 
 
 
 > `/mostactivity?org=devco-morkjebla`
-// https://api.github.com/repos/arvidwedtstein/nuxt-website/stats/code_frequency
-//https://mholt.github.io/json-to-go/
 
 
 //https://awesome-github-stats.azurewebsites.net/user-stats/lartrax/rank
-//https://api.github.com/repos/devco-morkjebla/unzippy/stats/commit_activity
 
-//https://docs.github.com/en/rest/reference/metrics
