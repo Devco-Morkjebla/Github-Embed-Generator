@@ -18,20 +18,20 @@ type Styles struct {
 func CheckHex(str map[string]string) Styles {
 	var style Styles
 	r, _ := regexp.Compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
-	if !r.MatchString(str[style.Border]) {
+	if !r.MatchString(str["Border"]) {
 		style.Border = "000000"
 	} else {
 		style.Border = str["Border"]
 	}
-	if !r.MatchString(str[style.Title]) {
+	if !r.MatchString(str["Title"]) {
 		style.Title = "000000"
 	} else {
-		style.Title = str["Border"]
+		style.Title = str["Title"]
 	}
 	if !r.MatchString(str["Background"]) {
 		style.Background = "ffffff"
 	} else {
-		style.Background = str["Border"]
+		style.Background = str["Background"]
 	}
 	if !r.MatchString(str["Text"]) {
 		style.Text = "000000"

@@ -18,7 +18,7 @@ type Skillscard struct {
 }
 
 func Skills(title string, languages []string, cardstyle style.Styles) Skillscard {
-
+	fmt.Println(cardstyle.Title)
 	height := 700
 	width := 600
 	titleboxheight := 50
