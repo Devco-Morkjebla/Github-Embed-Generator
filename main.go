@@ -91,9 +91,10 @@ func projectcard(c *gin.Context) {
 		"Text":       c.Request.FormValue("textcolor"),
 		"Box":        c.Request.FormValue("boxcolor"),
 	}
+	user := c.Request.FormValue("user")
 	repo := c.Request.FormValue("repo")
 	color = style.CheckHex(styles)
-	c.String(http.StatusOK, project.Project(repo, color))
+	c.String(http.StatusOK, project.Project(user, repo, color))
 }
 func rankList(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
