@@ -28,8 +28,8 @@ func main() {
 	router.GET("/skills", getSkills)
 	router.GET("/mostactivity", getMostactivity)
 	router.GET("/project", projectcard)
-	// router.Run("localhost:8080")
-	router.Run()
+	router.Run("localhost:8080")
+	// router.Run()
 
 }
 

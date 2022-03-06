@@ -60,8 +60,8 @@ func CircleProgressbar(progress, radius, strokewidth, posX, posY int, color stri
 	}
 
 	dashoffset := ((100 - float64(progress)) / 100) * dasharray
-	progressbar := fmt.Sprintf(`<circle stroke-linecap="butt" filter="filter0_d_0_1" style="animation: CircleProgressbar%v 3s forwards ease-in-out; z-index: 2;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/>`,
-		radius, strings.Join(class, " "), posX, posY, radius, color, strokewidth, dasharray, dashoffset)
+	progressbar := fmt.Sprintf(`<g data-testid="rank-circle" transform="translate(0,0)"><circle class="rank-circle-rim" cx="0" cy="0" r="%v" fill="transparent" stroke="#000000" stroke-width="%v"/><circle stroke-linecap="butt" filter="filter0_d_0_1" style="animation: CircleProgressbar%v 3s forwards ease-in-out;" class="%v" cx="%v" cy="%v" r="%v" fill="transparent" stroke="%v" stroke-width="%v" stroke-dasharray="%v" stroke-dashoffset="%v"/></g>`,
+		radius, strokewidth, radius, strings.Join(class, " "), posX, posY, radius, color, strokewidth, dasharray, dashoffset)
 	return progressbar, GetProgressAnimation(progress, radius)
 }
 func GetProgressAnimation(progress, radius int) string {
@@ -76,13 +76,13 @@ func GetProgressAnimation(progress, radius int) string {
 
 	dashoffset := ((100 - float64(progress)) / 100) * dasharray
 	return `@keyframes CircleProgressbar` + strconv.Itoa(radius) + ` { 
-	from { 
-		stroke-dashoffset: ` + strconv.Itoa(int(dasharray)) + `
-	}
-	to { 
-		stroke-dashoffset: ` + strconv.Itoa(int(dashoffset)) + `
-	}
-}`
+		from { 
+			stroke-dashoffset: ` + strconv.Itoa(int(dasharray)) + `
+		}
+		to { 
+			stroke-dashoffset: ` + strconv.Itoa(int(dashoffset)) + `
+		}
+	}`
 }
 
 func GenerateCard(style style.Styles, defs []string, body []string, width, height int, customStyles ...string) []string {
