@@ -146,11 +146,11 @@ func getSkills(c *gin.Context) {
 	languages := strings.Split(c.Request.URL.Query().Get("languages"), ",")
 
 	styles := map[string]string{
-		color.Title:      c.Request.FormValue("titlecolor"),
-		color.Border:     c.Request.FormValue("bordercolor"),
-		color.Background: c.Request.FormValue("backgroundcolor"),
-		color.Text:       c.Request.FormValue("textcolor"),
-		color.Box:        c.Request.FormValue("boxcolor"),
+		"Title":      c.Request.FormValue("titlecolor"),
+		"Border":     c.Request.FormValue("bordercolor"),
+		"Background": c.Request.FormValue("backgroundcolor"),
+		"Text":       c.Request.FormValue("textcolor"),
+		"Box":        c.Request.FormValue("boxcolor"),
 	}
 
 	color = style.CheckHex(styles)
