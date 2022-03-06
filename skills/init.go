@@ -2,6 +2,7 @@ package skills
 
 import (
 	"fmt"
+	"githubembedapi/card"
 	"githubembedapi/card/style"
 	"githubembedapi/icons"
 	"math"
@@ -16,16 +17,7 @@ type Skillscard struct {
 	Body   []string     `json:"body"`
 }
 
-type Styles struct {
-	Title      string
-	Border     string
-	Background string
-	Text       string
-	Textfont   string
-	Box        string
-}
-
-func Skills(title string, languages []string, style style.Styles) Skillscard {
+func Skills(title string, languages []string, cardstyle style.Styles) Skillscard {
 
 	height := 700
 	width := 600
@@ -48,28 +40,28 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 			}
 		}`,
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: #` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
-		`.textwhite { font: 20px sans-serif; fill: #ffffff; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
+		`.text { font: 20px sans-serif; fill: #` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
+		`.textwhite { font: 20px sans-serif; fill: #ffffff; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
 		`.large {
 			font: 25px sans-serif; 
 			fill: black
 		}`,
 		`.title { 
 			font: 25px sans-serif; 
-			fill: #` + style.Title + `;
+			fill: #` + cardstyle.Title + `;
 		}`,
 		`.repobox { 
-			fill: #` + style.Box + `;
-			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
+			fill: #` + cardstyle.Box + `;
+			border: ` + strconv.Itoa(strokewidth) + `px solid #` + cardstyle.Border + `;
 		}`,
 		`.box {
-			fill: #` + style.Background + `;
-			border: 3px solid #` + style.Border + `;
-			stroke: #` + style.Border + `;
+			fill: #` + cardstyle.Background + `;
+			border: 3px solid #` + cardstyle.Border + `;
+			stroke: #` + cardstyle.Border + `;
 			stroke-width: ` + strconv.Itoa(strokewidth) + `px;
 		}`,
 		`</style>`,
-		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, ToTitleCase(title)),
+		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, card.ToTitleCase(title)),
 	}
 	bodyAdd := func(content string) string {
 		body = append(body, content)
@@ -149,15 +141,12 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 	}
 
 	// Line on top
-	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, style.Border)}, body...)
+	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, cardstyle.Border)}, body...)
 	body = append([]string{fmt.Sprintf(`<rect x="%v" y="%v" class="box" width="%v" height="%v" rx="15"  />`, strokewidth/2, strokewidth/2, width, height)}, body...)
 	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
 	body = append([]string{svgTag}, body...)
 	bodyAdd(`</svg>`)
-	newcard := Skillscard{title, languages, style, body}
+	newcard := Skillscard{title, languages, cardstyle, body}
 	return newcard
 
-}
-func ToTitleCase(str string) string {
-	return strings.Title(str)
 }
