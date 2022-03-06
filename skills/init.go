@@ -56,9 +56,7 @@ func Skills(title string, languages []string, style style.Styles) Skillscard {
 		}`,
 		`.title { 
 			font: 25px sans-serif; 
-			// fill: #` + style.Title + `;
-			fill: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-			animation: gradient 15s ease infinite;
+			fill: #` + style.Title + `;
 		}`,
 		`.repobox { 
 			fill: #` + style.Box + `;
