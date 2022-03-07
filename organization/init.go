@@ -3,6 +3,8 @@ package organization
 import (
 	"encoding/json"
 	"fmt"
+	"githubembedapi/card"
+	"githubembedapi/card/style"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -133,25 +135,17 @@ type Author struct {
 }
 
 type OrgCard struct {
-	Title        string   `json:"title"`
-	Organization string   `json:"score"`
-	Styles       Styles   `json:"styles"`
-	Body         []string `json:"body"`
+	Title        string       `json:"title"`
+	Organization string       `json:"score"`
+	Styles       style.Styles `json:"styles"`
+	Body         []string     `json:"body"`
 }
 
-type Styles struct {
-	Title      string
-	Border     string
-	Background string
-	Text       string
-	Textfont   string
-	Box        string
-}
 type Res struct {
 	GITHUB string
 }
 
-func MostactivityCard(title, org string, style Styles, github_token string) OrgCard {
+func MostactivityCard(title, org string, cardstyle style.Styles, github_token string) string {
 	apiurl := "https://api.github.com/orgs/" + org + "/repos"
 	// Create a new request using http
 	reqAPI, err := http.NewRequest("GET", apiurl, nil)
@@ -216,30 +210,36 @@ func MostactivityCard(title, org string, style Styles, github_token string) OrgC
 	padding := 10
 	strokewidth := 3
 
-	body := []string{
-		`<style>`,
+	customstyles := []string{
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: #` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
+		`.text { font: 20px sans-serif; fill: #` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
 		`.large {
 			font: 25px sans-serif; 
 			fill: black
 		}`,
-		`.title { font: 25px sans-serif; fill: #` + style.Title + `}`,
+		`.title { font: 25px sans-serif; fill: #` + cardstyle.Title + `}`,
 		`.repobox { 
-			fill: #` + style.Box + `;
-			border: ` + strconv.Itoa(strokewidth) + `px solid #` + style.Border + `;
+			fill: #` + cardstyle.Box + `;
+			border: ` + strconv.Itoa(strokewidth) + `px solid #` + cardstyle.Border + `;
 		}`,
 		`.repobox:hover { fill: rgba(255,0,0,0.8);}`,
 		`.repobox:hover rect {filter: blur(30px);}`,
 		`.box {
-			fill: #` + style.Background + `;
-			border: 3px solid #` + style.Border + `;
-			stroke: #` + style.Border + `;
+			fill: #` + cardstyle.Background + `;
+			border: 3px solid #` + cardstyle.Border + `;
+			stroke: #` + cardstyle.Border + `;
 			stroke-width: ` + strconv.Itoa(strokewidth) + `px;
 		}`,
-		`</style>`,
-		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, ToTitleCase(org)),
 	}
+	defs := []string{
+		style.LinearGradient("gradient-fill", []string{"#1f005c", "#5b0060", "#870160", "#ac255e", "#ca485c", "#e16b5c", "#f39060", "#ffb56b"}),
+	}
+
+	body := []string{
+		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, card.ToTitleCase(org)),
+	}
+
+	/* Function for adding text */
 	txt := func(content string, posX int, posY int, class ...string) string {
 		return fmt.Sprintf(`<text x="%v" y="%v" class="%v">%v</text>`, posX, posY, strings.Join(class, " "), content)
 	}
@@ -253,7 +253,7 @@ func MostactivityCard(title, org string, style Styles, github_token string) OrgC
 	originalpos := posY
 	posX := 0
 	row := func(content []string) {
-		bodyAdd(`<g class="repobox" transform="translate(` + strconv.Itoa(posX+padding) + `,` + strconv.Itoa(posY) + `) rotate(0)">`)
+		bodyAdd(fmt.Sprintf(`<g class="repobox" transform="translate(%v,%v) rotate(0)">`, posX+padding, posY))
 		for _, v := range content {
 			bodyAdd(v)
 		}
@@ -293,16 +293,20 @@ func MostactivityCard(title, org string, style Styles, github_token string) OrgC
 				totalCommits += g.Total
 			}
 		}
+
 		fmt.Printf("%v - %v with %v total commits", i+1, r.Name, totalCommits)
 		r.Commits = totalCommits
+
+		/* Row */
 		row([]string{
 			fmt.Sprintf(`<rect x="0" y="0" rx="5" class="repobox" width="%v" height="%v" />`, boxwidth, boxheight),
-			`<a href="` + r.HTMLURL + `"><text x="5" y="30" class="title">` + r.Name + `</text></a>`,
-			`<text x="5" y="50" class="text">Language - ` + r.Language + `</text>`,
+			fmt.Sprintf(`<a href="%v"><text x="5" y="30" class="title">%v</text></a>`, r.HTMLURL, r.Name),
 			txt(`Language - `+r.Language, 5, 50, `text`),
-			`<text x="5" y="70" class="text">Issues - ` + strconv.Itoa(r.OpenIssuesCount) + `</text>`,
-			`<text x="5" y="90" class="text">Commits - ` + strconv.Itoa(totalCommits) + `</text>`,
+			txt(fmt.Sprintf(`Issues - %v`, r.OpenIssuesCount), 5, 70, `text`),
+			txt(fmt.Sprintf(`Commits - %v`, totalCommits), 5, 90, `text`),
 		})
+
+		/* Break row */
 		if posX+boxwidth >= width {
 			width = posX + padding
 			break
@@ -310,13 +314,13 @@ func MostactivityCard(title, org string, style Styles, github_token string) OrgC
 		posY += boxheight + padding
 	}
 	bodyAdd(`</g>`)
-	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, style.Border)}, body...)
+	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, cardstyle.Border)}, body...)
 	body = append([]string{fmt.Sprintf(`<rect x="0" y="0" class="box" width="%v" height="%v" rx="15"  />`, width, height)}, body...)
 	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
 	body = append([]string{svgTag}, body...)
 	bodyAdd(`</svg>`)
-	newcard := OrgCard{title, org, style, body}
-	return newcard
+
+	return strings.Join(card.GenerateCard(cardstyle, defs, body, width, height, customstyles...), "\n")
 
 }
 func ToTitleCase(str string) string {

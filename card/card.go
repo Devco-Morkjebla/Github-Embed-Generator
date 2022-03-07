@@ -99,6 +99,8 @@ func GenerateCard(style style.Styles, defs []string, body []string, width, heigh
 	return card.Body
 }
 
+/* Functional Functions */
+
 func ToTitleCase(str string) string {
 	return strings.Title(str)
 }

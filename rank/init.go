@@ -3,11 +3,11 @@ package rank
 import (
 	"encoding/json"
 	"fmt"
+	"githubembedapi/card"
+	"githubembedapi/card/style"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -27,12 +27,6 @@ type Kv struct {
 	Value User
 }
 
-type RankCard struct {
-	Title  string   `json:"title"`
-	Score  []Kv     `json:"score"`
-	Styles Styles   `json:"styles"`
-	Body   []string `json:"body"`
-}
 type Response struct {
 	Total_Count int     `json:"total_count"`
 	Items       []Items `json:"items"`
@@ -55,15 +49,23 @@ type Styles struct {
 	Textfont   string
 }
 
-func Rankcard(title string, users []string, style Styles) RankCard {
+func Rankcard(title string, users []string, cardstyle style.Styles) string {
 
+	customstyles := []string{
+		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
+		`.text { font: 20px sans-serif; fill: ` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
+		`.large { font: 25px sans-serif; fill: black}`,
+		`.title { font: 25px sans-serif; fill: ` + cardstyle.Title + `}`,
+		`.box { fill: ` + cardstyle.Background + `}`,
+		`.profileimage { border-radius: 50%}`,
+	}
+	defs := []string{}
 	ss := make(map[string]User)
 	for key, i := range users {
 		userurl := "https://api.github.com/search/commits?q=author:" + fmt.Sprintf("%v", i) + "&sort=author-date&order=desc&page=1"
 		response, err := http.Get(userurl)
 		if err != nil {
-			fmt.Print(err.Error())
-			os.Exit(1)
+			panic(err)
 		}
 		responseData, err := ioutil.ReadAll(response.Body)
 
@@ -95,41 +97,22 @@ func Rankcard(title string, users []string, style Styles) RankCard {
 	totalHeight := 40
 	width := 400
 	strokewidth := 3
-	svgTag := `<svg width="` + strconv.Itoa(width+strokewidth) + `" height="` + strconv.Itoa(totalHeight+180) + `" fill="none" viewBox="0 0 ` + strconv.Itoa(width+strokewidth) + ` ` + strconv.Itoa(totalHeight+180) + `"
-	xmlns="http://www.w3.org/2000/svg">`
 
-	titlesvg := fmt.Sprintf(`<text x="20" y="25" class="title">%s</text>`, ToTitleCase(title))
 	body := []string{
-		svgTag,
-		`<style>`,
-		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: ` + style.Text + `; font-family: ` + style.Textfont + `; text-decoration: underline;}`,
-		`.large { font: 25px sans-serif; fill: black}`,
-		`.title { font: 25px sans-serif; fill: ` + style.Title + `}`,
-		`.box { fill: ` + style.Background + `}`,
-		`.profileimage { border-radius: 50%}`,
-		`</style>`,
-		`<rect x="0" y="0" class="box" width="` + strconv.Itoa(width) + `" height="200" rx="15" style="stroke-width:3;stroke:` + style.Border + `"/>`,
-		`<rect x="0" y="30" width="` + strconv.Itoa(width) + `" height="3" fill="` + style.Border + `"/>`,
-		titlesvg,
+		fmt.Sprintf(`<rect x="0" y="0" class="box" width="%v" height="200" rx="15" style="stroke-width:3;stroke:%v"/>`, width, cardstyle.Border),
+		fmt.Sprintf(`<rect x="0" y="30" width="%v" height="3" fill="%v"/>`, width, cardstyle.Border),
+		fmt.Sprintf(`<text x="20" y="25" class="title">%s</text>`, card.ToTitleCase(title)),
 	}
 	// Generate body for the users
 	pos := 1
 	for _, s := range score {
 		var rowx int = 20
-
 		img := fmt.Sprintf(`<image x="%v" y="%v" href="%v" class="profileimage" height="30" width="30"/>`, rowx, totalHeight, s.Value.Avatar)
-		text := fmt.Sprintf(`<text x="%v" y="%v" class="text">%v. %v - %v commits</text>`, rowx+40, totalHeight+20, pos, ToTitleCase(s.Value.Name), s.Value.Score)
+		text := fmt.Sprintf(`<text x="%v" y="%v" class="text">%v. %v - %v commits</text>`, rowx+40, totalHeight+20, pos, card.ToTitleCase(s.Value.Name), s.Value.Score)
 		totalHeight += 30
 		pos += 1
 		body = append(body, text)
 		body = append(body, img)
-
 	}
-	body = append(body, `</svg>`)
-	newcard := RankCard{title, score, style, body}
-	return newcard
-}
-func ToTitleCase(str string) string {
-	return strings.Title(str)
+	return strings.Join(card.GenerateCard(cardstyle, defs, body, width+strokewidth, totalHeight+180, customstyles...), "\n")
 }

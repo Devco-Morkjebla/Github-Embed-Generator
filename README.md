@@ -7,7 +7,11 @@
 
 ## Routes
 Languages are comma seperated
-> /skills/:languages
+| Routes | Query |
+|---|---|
+| /skills | ?languages=lang1,lang2,lang3 |
+| /rankList | ?users=user1,user2 |
+| /mostactivity | ?org=devco-morkjebla |
 Example: `https://arvidgithubembed.herokuapp.com/skills?languages=php,mysql,javascript,typescript`
 ### Customization
 
@@ -31,10 +35,6 @@ All hex colors without '#' please
 - `backgroundcolor` - Card's background color _(hex color)_ 
 - `boxcolor` - Card's languages color _(hex color)_
 - `title` - Card's custom title _(string)_
-Example: `https://arvidgithubembed.herokuapp.com/skills?languages=php,mysql,javascript,typescript&title=test`
-
-
-
 
 Example: 
 `/ranklist?users=lartrax,arvidwedtstein&bordercolor=black&titlecolor=red&textcolor=green&backgroundcolor=yellow&title=test`
