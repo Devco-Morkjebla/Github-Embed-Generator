@@ -10,14 +10,8 @@ import (
 	"strings"
 )
 
-type Skillscard struct {
-	Title  string       `json:"title"`
-	Skills []string     `json:"skills"`
-	Styles style.Styles `json:"styles"`
-	Body   []string     `json:"body"`
-}
+func Skills(title string, languages []string, cardstyle style.Styles) string {
 
-func Skills(title string, languages []string, cardstyle style.Styles) Skillscard {
 	fmt.Println(cardstyle.Title)
 	height := 700
 	width := 600
@@ -26,43 +20,29 @@ func Skills(title string, languages []string, cardstyle style.Styles) Skillscard
 	strokewidth := 3
 	boxwidth := 60
 	boxheight := 60
-	body := []string{
-		`<style>`,
-		`@keyframes gradient {
-			0% {
-				background-position: 0% 50%;
-			}
-			50% {
-				background-position: 100% 50%;
-			}
-			100% {
-				background-position: 0% 50%;
-			}
-		}`,
+
+	customstyles := []string{
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: #` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
-		`.textwhite { font: 20px sans-serif; fill: #ffffff; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
-		`.large {
-			font: 25px sans-serif; 
-			fill: black
-		}`,
-		`.title { 
-			font: 25px sans-serif; 
-			fill: #` + cardstyle.Title + `;
-		}`,
 		`.repobox { 
-			fill: #` + cardstyle.Box + `;
+			fill: ` + cardstyle.Box + `;
 			border: ` + strconv.Itoa(strokewidth) + `px solid #` + cardstyle.Border + `;
 		}`,
 		`.box {
-			fill: #` + cardstyle.Background + `;
+			fill: ` + cardstyle.Background + `;
 			border: 3px solid #` + cardstyle.Border + `;
-			stroke: #` + cardstyle.Border + `;
+			stroke: ` + cardstyle.Border + `;
 			stroke-width: ` + strconv.Itoa(strokewidth) + `px;
 		}`,
-		`</style>`,
+	}
+	defs := []string{
+		style.RadialGradient("paint0_angular_0_1", []string{"#7400B8", "#6930C3", "#5E60CE", "#5390D9", "#4EA8DE", "#48BFE3", "#56CFE1", "#64DFDF", "#72EFDD"}),
+		style.LinearGradient("gradient-fill", []string{"#1f005c", "#5b0060", "#870160", "#ac255e", "#ca485c", "#e16b5c", "#f39060", "#ffb56b"}),
+	}
+
+	body := []string{
 		fmt.Sprintf(`<text x="20" y="35" class="title">%s</text>`, card.ToTitleCase(title)),
 	}
+
 	bodyAdd := func(content string) string {
 		body = append(body, content)
 		return content
@@ -141,12 +121,9 @@ func Skills(title string, languages []string, cardstyle style.Styles) Skillscard
 	}
 
 	// Line on top
-	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, cardstyle.Border)}, body...)
+	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="%v"/>`, titleboxheight, width, strokewidth, cardstyle.Border)}, body...)
 	body = append([]string{fmt.Sprintf(`<rect x="%v" y="%v" class="box" width="%v" height="%v" rx="15"  />`, strokewidth/2, strokewidth/2, width, height)}, body...)
-	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
-	body = append([]string{svgTag}, body...)
-	bodyAdd(`</svg>`)
-	newcard := Skillscard{title, languages, cardstyle, body}
-	return newcard
+
+	return strings.Join(card.GenerateCard(cardstyle, defs, body, width+strokewidth, height+strokewidth, customstyles...), "\n")
 
 }

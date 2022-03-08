@@ -28,8 +28,8 @@ func main() {
 	router.GET("/mostactivity", getMostactivity)
 	router.GET("/project", projectcard)
 	router.GET("/commitactivity", repositoryCommitActivity)
-	// router.Run("localhost:8080")
-	router.Run()
+	router.Run("localhost:8080")
+	// router.Run()
 
 }
 
@@ -68,8 +68,9 @@ func repositoryCommitActivity(c *gin.Context) {
 	user := c.Request.FormValue("user")
 	repo := c.Request.FormValue("repo")
 	title := c.Request.FormValue("title")
+	var hide_week string = c.Request.FormValue("hide_week")
 
-	c.String(http.StatusOK, commit_activity.RepositoryCommitActivity(title, user, repo, color))
+	c.String(http.StatusOK, commit_activity.RepositoryCommitActivity(title, user, repo, hide_week, color))
 }
 func projectcard(c *gin.Context) {
 	c.Header("Content-Type", "image/svg+xml")
@@ -99,7 +100,7 @@ func rankList(c *gin.Context) {
 	users := strings.Split(fmt.Sprintf("%v", c.Request.FormValue("users")), ",")
 	title := c.Request.FormValue("title")
 
-	if title == "" {
+	if title == "" || len(title) < 1 {
 		title = "Rank"
 	}
 	if len(users) > 5 {
@@ -123,15 +124,13 @@ func getSkills(c *gin.Context) {
 		"Text":       c.Request.FormValue("textcolor"),
 		"Box":        c.Request.FormValue("boxcolor"),
 	}
-
+	// Function that checks all HEX codes
 	color = style.CheckHex(styles)
 	title := c.Request.FormValue("title")
 
-	if title == "" {
+	if title == "" || len(title) <= 0 {
 		title = "Skills"
 	}
 
-	newCard := skills.Skills(title, languages, color)
-
-	c.String(http.StatusOK, strings.Join(newCard.Body, "\n"))
+	c.String(http.StatusOK, skills.Skills(title, languages, color))
 }

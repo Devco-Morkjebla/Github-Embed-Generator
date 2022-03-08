@@ -212,22 +212,22 @@ func MostactivityCard(title, org string, cardstyle style.Styles, github_token st
 
 	customstyles := []string{
 		`@font-face { font-family: Papyrus; src: '../papyrus.TFF'}`,
-		`.text { font: 20px sans-serif; fill: #` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
+		`.text { font: 20px sans-serif; fill: ` + cardstyle.Text + `; font-family: ` + cardstyle.Textfont + `; text-decoration: underline;}`,
 		`.large {
 			font: 25px sans-serif; 
 			fill: black
 		}`,
 		`.title { font: 25px sans-serif; fill: #` + cardstyle.Title + `}`,
 		`.repobox { 
-			fill: #` + cardstyle.Box + `;
-			border: ` + strconv.Itoa(strokewidth) + `px solid #` + cardstyle.Border + `;
+			fill: ` + cardstyle.Box + `;
+			border: ` + strconv.Itoa(strokewidth) + `px solid ` + cardstyle.Border + `;
 		}`,
 		`.repobox:hover { fill: rgba(255,0,0,0.8);}`,
 		`.repobox:hover rect {filter: blur(30px);}`,
 		`.box {
-			fill: #` + cardstyle.Background + `;
-			border: 3px solid #` + cardstyle.Border + `;
-			stroke: #` + cardstyle.Border + `;
+			fill: ` + cardstyle.Background + `;
+			border: 3px solid ` + cardstyle.Border + `;
+			stroke: ` + cardstyle.Border + `;
 			stroke-width: ` + strconv.Itoa(strokewidth) + `px;
 		}`,
 	}
@@ -316,9 +316,6 @@ func MostactivityCard(title, org string, cardstyle style.Styles, github_token st
 	bodyAdd(`</g>`)
 	body = append([]string{fmt.Sprintf(`<rect x="0" y="%v" width="%v" height="%v" fill="#%v"/>`, titleboxheight, width, strokewidth, cardstyle.Border)}, body...)
 	body = append([]string{fmt.Sprintf(`<rect x="0" y="0" class="box" width="%v" height="%v" rx="15"  />`, width, height)}, body...)
-	svgTag := fmt.Sprintf(`<svg width="%v" height="%v" fill="none" viewBox="0 0 %v %v" xmlns="http://www.w3.org/2000/svg">`, width+strokewidth, height+strokewidth, width+strokewidth, height+strokewidth)
-	body = append([]string{svgTag}, body...)
-	bodyAdd(`</svg>`)
 
 	return strings.Join(card.GenerateCard(cardstyle, defs, body, width, height, customstyles...), "\n")
 
